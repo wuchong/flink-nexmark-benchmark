@@ -55,6 +55,15 @@ public class GeneratorTest {
   }
 
   @Test
+  public void dumpEvent(){
+    long n = 55729L;
+    GeneratorConfig initialConfig = makeConfig(n);
+    Generator generator = new Generator(initialConfig);
+    for(int i = 0; i < 10; i++)
+      System.out.println(generator.nextEvent().event.toString());
+  }
+
+  @Test
   public void splitAtFractionPreservesOverallEventCount() {
     long n = 55729L;
     GeneratorConfig initialConfig = makeConfig(n);
