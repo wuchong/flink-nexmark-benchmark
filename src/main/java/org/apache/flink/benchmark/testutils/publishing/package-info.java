@@ -15,17 +15,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.flink.benchmark.nexmark;
-
-import java.util.Map;
-
-
-/**
- * Represents ANY test result (POJO). Implementations of this interface are to be used by generic
- * mechanisms for publishing, parsing etc.
- */
-public interface TestResult {
-
-  /** Transforms the TestResult POJO to map of field names and values. */
-  Map<String, Object> toMap();
-}
+/** Tools for publishing data to various data stores (such as BigQuery etc.). */
+package org.apache.flink.benchmark.testutils.publishing;
