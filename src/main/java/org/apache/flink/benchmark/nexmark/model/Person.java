@@ -62,7 +62,7 @@ public class Person implements KnownSize, Serializable {
     public String state;
 
     @JsonProperty
-    public long timestamp;
+    public long ts;
 
     /**
      * Additional arbitrary payload for performance testing.
@@ -79,7 +79,7 @@ public class Person implements KnownSize, Serializable {
         creditCard = null;
         city = null;
         state = null;
-        timestamp = 0;
+        ts = 0;
         extra = null;
     }
 
@@ -98,13 +98,13 @@ public class Person implements KnownSize, Serializable {
         this.creditCard = creditCard;
         this.city = city;
         this.state = state;
-        this.timestamp = timestamp;
+        this.ts = timestamp;
         this.extra = extra;
     }
 
     public static String[] getFieldNames() {
         return new String[]{"id", "name", "emailAddress", "creditCard",
-                "city", "state", "timestamp", "extra"};
+                "city", "state", "ts", "extra"};
     }
 
     public static TypeInformation[] getFieldTypes() {
@@ -117,7 +117,7 @@ public class Person implements KnownSize, Serializable {
      */
     public Person withAnnotation(String annotation) {
         return new Person(
-                id, name, emailAddress, creditCard, city, state, timestamp, annotation + ": " + extra);
+                id, name, emailAddress, creditCard, city, state, ts, annotation + ": " + extra);
     }
 
     /**
@@ -139,7 +139,7 @@ public class Person implements KnownSize, Serializable {
                     creditCard,
                     city,
                     state,
-                    timestamp,
+                    ts,
                     extra.substring(annotation.length() + 2));
         } else {
             return this;
@@ -183,7 +183,7 @@ public class Person implements KnownSize, Serializable {
         }
         Person person = (Person) o;
         return id == person.id
-                && Objects.equal(timestamp, person.timestamp)
+                && Objects.equal(ts, person.ts)
                 && Objects.equal(name, person.name)
                 && Objects.equal(emailAddress, person.emailAddress)
                 && Objects.equal(creditCard, person.creditCard)
@@ -194,6 +194,6 @@ public class Person implements KnownSize, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, name, emailAddress, creditCard, city, state, timestamp, extra);
+        return Objects.hashCode(id, name, emailAddress, creditCard, city, state, ts, extra);
     }
 }

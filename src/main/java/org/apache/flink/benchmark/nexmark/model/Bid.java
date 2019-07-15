@@ -61,7 +61,7 @@ public class Bid implements KnownSize, Serializable {
      * event time.
      */
     @JsonProperty
-    public long timestamp;
+    public long ts;
 
     /**
      * Additional arbitrary payload for performance testing.
@@ -75,7 +75,7 @@ public class Bid implements KnownSize, Serializable {
         auction = 0;
         bidder = 0;
         price = 0;
-        timestamp = 0;
+        ts = 0;
         extra = null;
     }
 
@@ -83,7 +83,7 @@ public class Bid implements KnownSize, Serializable {
         this.auction = auction;
         this.bidder = bidder;
         this.price = price;
-        this.timestamp = timestamp;
+        this.ts = timestamp;
         this.extra = extra;
     }
 
@@ -91,7 +91,7 @@ public class Bid implements KnownSize, Serializable {
      * Return a copy of bid which capture the given annotation. (Used for debugging).
      */
     public Bid withAnnotation(String annotation) {
-        return new Bid(auction, bidder, price, timestamp, annotation + ": " + extra);
+        return new Bid(auction, bidder, price, ts, annotation + ": " + extra);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Bid implements KnownSize, Serializable {
      */
     public Bid withoutAnnotation(String annotation) {
         if (hasAnnotation(annotation)) {
-            return new Bid(auction, bidder, price, timestamp, extra.substring(annotation.length() + 2));
+            return new Bid(auction, bidder, price, ts, extra.substring(annotation.length() + 2));
         } else {
             return this;
         }
@@ -125,13 +125,13 @@ public class Bid implements KnownSize, Serializable {
         return Objects.equals(auction, other.auction)
                 && Objects.equals(bidder, other.bidder)
                 && Objects.equals(price, other.price)
-                && Objects.equals(timestamp, other.timestamp)
+                && Objects.equals(ts, other.ts)
                 && Objects.equals(extra, other.extra);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(auction, bidder, price, timestamp, extra);
+        return Objects.hash(auction, bidder, price, ts, extra);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class Bid implements KnownSize, Serializable {
 
     public static String[] getFieldNames() {
         return new String[]{"auction", "bidder", "price",
-                "timestamp","extra"};
+                "ts","extra"};
     }
 
     public static TypeInformation[] getFieldTypes() {

@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
@@ -37,7 +36,6 @@ import org.apache.flink.table.api.Types;
  */
 @DefaultSchema(JavaFieldSchema.class)
 public class Auction implements KnownSize, Serializable {
-
 
     /**
      * Id of auction.
@@ -67,7 +65,7 @@ public class Auction implements KnownSize, Serializable {
     public long reserve;
 
     @JsonProperty
-    public long timestamp;
+    public long ts;
 
     /**
      * When does auction expire? (ms since epoch). Bids at or after this time are ignored.
@@ -101,7 +99,7 @@ public class Auction implements KnownSize, Serializable {
         description = null;
         initialBid = 0;
         reserve = 0;
-        timestamp = 0;
+        ts = 0;
         expires = 0;
         seller = 0;
         category = 0;
@@ -124,7 +122,7 @@ public class Auction implements KnownSize, Serializable {
         this.description = description;
         this.initialBid = initialBid;
         this.reserve = reserve;
-        this.timestamp = tiemstamp;
+        this.ts = tiemstamp;
         this.expires = expires;
         this.seller = seller;
         this.category = category;
@@ -134,7 +132,7 @@ public class Auction implements KnownSize, Serializable {
 
     public static String[] getFieldNames() {
         return new String[]{"id", "itemName", "description", "initialBid",
-                "reserve", "timestamp", "expires", "seller", "category", "extra"};
+                "reserve", "ts", "expires", "seller", "category", "extra"};
     }
 
     public static TypeInformation[] getFieldTypes() {
@@ -152,7 +150,7 @@ public class Auction implements KnownSize, Serializable {
                 description,
                 initialBid,
                 reserve,
-                timestamp,
+                ts,
                 expires,
                 seller,
                 category,
@@ -177,7 +175,7 @@ public class Auction implements KnownSize, Serializable {
                     description,
                     initialBid,
                     reserve,
-                    timestamp,
+                    ts,
                     expires,
                     seller,
                     category,
@@ -225,7 +223,7 @@ public class Auction implements KnownSize, Serializable {
         return id == auction.id
                 && initialBid == auction.initialBid
                 && reserve == auction.reserve
-                && Objects.equal(timestamp, auction.timestamp)
+                && Objects.equal(ts, auction.ts)
                 && Objects.equal(expires, auction.expires)
                 && seller == auction.seller
                 && category == auction.category
@@ -237,7 +235,7 @@ public class Auction implements KnownSize, Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(
-                id, itemName, description, initialBid, reserve, timestamp, expires, seller, category, extra);
+                id, itemName, description, initialBid, reserve, ts, expires, seller, category, extra);
     }
 
 }
