@@ -17,7 +17,6 @@
  */
 package org.apache.flink.benchmark.nexmark.sources.generator.model;
 
-import java.sql.Date;
 import java.util.Random;
 
 import org.apache.flink.benchmark.nexmark.model.Auction;
@@ -34,11 +33,7 @@ import static org.apache.flink.benchmark.nexmark.sources.generator.model.Strings
  * AuctionGenerator.
  */
 public class AuctionGenerator {
-    /**
-     * Keep the number of categories small so the example queries will find results even with a small
-     * batch of events.
-     */
-    private static final int NUM_CATEGORIES = 5;
+
 
     /**
      * Number of yet-to-be-created people and auction ids allowed.
@@ -69,7 +64,7 @@ public class AuctionGenerator {
         }
         seller += GeneratorConfig.FIRST_PERSON_ID;
 
-        long category = GeneratorConfig.FIRST_CATEGORY_ID + random.nextInt(NUM_CATEGORIES);
+        long category = GeneratorConfig.FIRST_CATEGORY_ID + random.nextInt(config.NUM_CATEGORIES);
         long initialBid = nextPrice(random);
         long expires = timestamp + nextAuctionLengthMs(eventsCountSoFar, random, timestamp, config);
         String name = nextString(random, 20);

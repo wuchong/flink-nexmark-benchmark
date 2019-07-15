@@ -19,10 +19,7 @@
 package org.apache.flink.benchmark.runner.flink;
 
 import org.apache.flink.benchmark.nexmark.NexmarkConfiguration;
-import org.apache.flink.benchmark.nexmark.model.Auction;
-import org.apache.flink.benchmark.nexmark.model.Bid;
-import org.apache.flink.benchmark.nexmark.model.Event;
-import org.apache.flink.benchmark.nexmark.model.Person;
+import org.apache.flink.benchmark.nexmark.model.*;
 import org.apache.flink.benchmark.nexmark.sources.generator.Generator;
 import org.apache.flink.benchmark.nexmark.sources.generator.GeneratorConfig;
 import org.apache.flink.benchmark.testutils.FileUtil;
@@ -68,14 +65,28 @@ public abstract class AbstractQueryTest {
 
     protected Table personTable;
 
+    protected long numEvents = 10000L;
+
+    protected GeneratorConfig initialConfig = makeConfig(numEvents);
+
+    protected List<Category> inMemoryCategories;
+
+
+    protected DataStream<Category> categoryStream;
+
+    protected Table categoryTable;
 
     @Before
     public void before() {
-        long n = 10000L;
-        inMemoryEvents = prepareInMemoryEvents(n);
+        inMemoryEvents = prepareInMemoryEvents(numEvents);
+        inMemoryCategories = prepareInMemoryCategories();
+
         File folder = new File(testPath);
         if (folder.exists())
             FileUtil.deleteFolder(folder);
+        categoryStream = env.fromCollection(inMemoryCategories);
+        categoryTable = tableEnv.fromDataStream(categoryStream,
+                TestUtil.formatFields(Category.getFieldNames()));
         bidStream = env.fromCollection(inMemoryEvents)
                 .filter(event -> event.bid != null)
                 .map(event -> event.bid);
@@ -91,12 +102,13 @@ public abstract class AbstractQueryTest {
                 .map(event -> event.newPerson);
         personTable = tableEnv.fromDataStream(personStream,
                 TestUtil.formatFields(Person.getFieldNames()));
+
     }
 
     public abstract void run() throws Exception;
 
     private List<Event> prepareInMemoryEvents(long n) {
-        GeneratorConfig initialConfig = makeConfig(n);
+
         Generator generator = new Generator(initialConfig);
         List<Event> events = new ArrayList<>();
         for (int i = 0; i < n; i++) {
@@ -105,6 +117,13 @@ public abstract class AbstractQueryTest {
             events.add(event);
         }
         return events;
+    }
+
+    public List<Category> prepareInMemoryCategories() {
+        List<Category> categories = new ArrayList<>();
+        for (int i = 0; i < GeneratorConfig.NUM_CATEGORIES; i++)
+            categories.add(new Category(initialConfig.FIRST_CATEGORY_ID + i));
+        return categories;
     }
 
     private GeneratorConfig makeConfig(long n) {

@@ -37,6 +37,8 @@ public class GeneratorConfig implements Serializable {
   public static final long FIRST_PERSON_ID = 1000L;
   public static final long FIRST_CATEGORY_ID = 10L;
 
+  public static final int NUM_CATEGORIES = 5;
+
   /** Proportions of people/auctions/bids to synthesize. */
   public static final int PERSON_PROPORTION = 1;
 
