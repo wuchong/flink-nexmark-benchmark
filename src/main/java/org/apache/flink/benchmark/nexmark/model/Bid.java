@@ -222,8 +222,8 @@ public class Bid implements KnownSize, Serializable {
 
     public static TypeInformation[] getFieldTypes() {
         return new TypeInformation[]{Types.LONG(), Types.LONG(), Types.LONG(), Types.STRING()};
-    }
 
+    }
 
 
 }

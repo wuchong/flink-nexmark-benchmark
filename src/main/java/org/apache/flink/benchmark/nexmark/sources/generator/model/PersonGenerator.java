@@ -65,6 +65,7 @@ public class PersonGenerator {
         8 + name.length() + email.length() + creditCard.length() + city.length() + state.length();
     String extra = nextExtra(random, currentSize, config.getAvgPersonByteSize());
     return new Person(id, name, email, creditCard, city, state, timestamp.toInstant(), extra);
+
   }
 
   /** Return a random person id (base 0). */

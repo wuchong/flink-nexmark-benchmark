@@ -1,5 +1,6 @@
 package org.apache.flink.benchmark.runner.flink;
 
+import org.apache.flink.api.scala.typeutils.Types;
 import org.apache.flink.benchmark.nexmark.model.Bid;
 import org.apache.flink.benchmark.testutils.TestUtil;
 import org.apache.flink.table.api.Table;
@@ -39,13 +40,9 @@ public class Query1Test extends AbstractQueryTest {
     @Test
     public void run() throws Exception {
 
-        TableSink sink = new CsvTableSink(testPath, "|");
-
         tableEnv.registerFunction(DolToEur.functionName, new DolToEur());
         tableEnv.registerTableSink(sinkTableName, Bid.getFieldNames(), Bid.getFieldTypes(), sink);
 
-        Table bidTable = tableEnv.fromDataStream(bidStream,
-                TestUtil.formatFields(Bid.getFieldNames()));
 
         String query1 = String.format("SELECT auction, bidder, %s(price) as price, extra FROM %s", DolToEur.functionName, bidTable) ;
 

@@ -19,15 +19,20 @@
 package org.apache.flink.benchmark.runner.flink;
 
 import org.apache.flink.benchmark.nexmark.NexmarkConfiguration;
+import org.apache.flink.benchmark.nexmark.model.Auction;
 import org.apache.flink.benchmark.nexmark.model.Bid;
 import org.apache.flink.benchmark.nexmark.model.Event;
+import org.apache.flink.benchmark.nexmark.model.Person;
 import org.apache.flink.benchmark.nexmark.sources.generator.Generator;
 import org.apache.flink.benchmark.nexmark.sources.generator.GeneratorConfig;
 import org.apache.flink.benchmark.testutils.FileUtil;
 import org.apache.flink.benchmark.testutils.TestUtil;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.sinks.CsvTableSink;
+import org.apache.flink.table.sinks.TableSink;
 import org.junit.Before;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +48,8 @@ public abstract class AbstractQueryTest {
 
     protected String sinkTableName = "CsvSinkTable";
 
+    protected TableSink sink = new CsvTableSink(testPath, "|");
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AbstractQueryTest.class);
 
     protected final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -51,9 +58,20 @@ public abstract class AbstractQueryTest {
 
     protected DataStream<Bid> bidStream;
 
+    protected Table bidTable;
+
+    protected DataStream<Auction> auctionStream;
+
+    protected Table auctionTable;
+
+    protected DataStream<Person> personStream;
+
+    protected Table personTable;
+
+
     @Before
     public void before() {
-        long n = 10L;
+        long n = 10000L;
         inMemoryEvents = prepareInMemoryEvents(n);
         File folder = new File(testPath);
         if (folder.exists())
@@ -61,6 +79,18 @@ public abstract class AbstractQueryTest {
         bidStream = env.fromCollection(inMemoryEvents)
                 .filter(event -> event.bid != null)
                 .map(event -> event.bid);
+        bidTable = tableEnv.fromDataStream(bidStream,
+                TestUtil.formatFields(Bid.getFieldNames()));
+        auctionStream = env.fromCollection(inMemoryEvents)
+                .filter(event -> event.newAuction != null)
+                .map(event -> event.newAuction);
+        auctionTable = tableEnv.fromDataStream(auctionStream,
+                TestUtil.formatFields(Auction.getFieldNames()));
+        personStream = env.fromCollection(inMemoryEvents)
+                .filter(event -> event.newPerson != null)
+                .map(event -> event.newPerson);
+        personTable = tableEnv.fromDataStream(personStream,
+                TestUtil.formatFields(Person.getFieldNames()));
     }
 
     public abstract void run() throws Exception;
