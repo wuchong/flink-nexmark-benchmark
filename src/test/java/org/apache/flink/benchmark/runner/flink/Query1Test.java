@@ -44,7 +44,7 @@ public class Query1Test extends AbstractQueryTest {
         tableEnv.registerTableSink(sinkTableName, Bid.getFieldNames(), Bid.getFieldTypes(), sink);
 
 
-        String query1 = String.format("SELECT auction, bidder, %s(price) as price, extra FROM %s", DolToEur.functionName, bidTable) ;
+        String query1 = String.format("SELECT auction, bidder, %s(price) as price, timestamp, extra FROM %s", DolToEur.functionName, bidTable) ;
 
         Table result = tableEnv.sqlQuery(query1);
 

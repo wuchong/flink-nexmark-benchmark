@@ -20,24 +20,15 @@ package org.apache.flink.benchmark.nexmark.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.*;
 
-import org.apache.beam.sdk.coders.Coder;
-import org.apache.beam.sdk.coders.CoderException;
-import org.apache.beam.sdk.coders.CustomCoder;
-import org.apache.beam.sdk.coders.InstantCoder;
-import org.apache.beam.sdk.coders.StringUtf8Coder;
-import org.apache.beam.sdk.coders.VarLongCoder;
+
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
 import org.apache.flink.table.api.Types;
-import org.joda.time.Instant;
 
 
 /**
@@ -45,65 +36,7 @@ import org.joda.time.Instant;
  */
 @DefaultSchema(JavaFieldSchema.class)
 public class Bid implements KnownSize, Serializable {
-    private static final Coder<Instant> INSTANT_CODER = InstantCoder.of();
-    private static final Coder<Long> LONG_CODER = VarLongCoder.of();
-    private static final Coder<String> STRING_CODER = StringUtf8Coder.of();
 
-    public static final Coder<Bid> CODER =
-            new CustomCoder<Bid>() {
-                @Override
-                public void encode(Bid value, OutputStream outStream) throws CoderException, IOException {
-                    LONG_CODER.encode(value.auction, outStream);
-                    LONG_CODER.encode(value.bidder, outStream);
-                    LONG_CODER.encode(value.price, outStream);
-                    INSTANT_CODER.encode(value.dateTime, outStream);
-                    STRING_CODER.encode(value.extra, outStream);
-                }
-
-                @Override
-                public Bid decode(InputStream inStream) throws CoderException, IOException {
-                    long auction = LONG_CODER.decode(inStream);
-                    long bidder = LONG_CODER.decode(inStream);
-                    long price = LONG_CODER.decode(inStream);
-                    Instant dateTime = INSTANT_CODER.decode(inStream);
-                    String extra = STRING_CODER.decode(inStream);
-                    return new Bid(auction, bidder, price, dateTime, extra);
-                }
-
-                @Override
-                public void verifyDeterministic() throws NonDeterministicException {
-                }
-
-                @Override
-                public Object structuralValue(Bid v) {
-                    return v;
-                }
-            };
-
-    /**
-     * Comparator to order bids by ascending price then descending time (for finding winning bids).
-     */
-    public static final Comparator<Bid> PRICE_THEN_DESCENDING_TIME =
-            (left, right) -> {
-                int i = Double.compare(left.price, right.price);
-                if (i != 0) {
-                    return i;
-                }
-                return right.dateTime.compareTo(left.dateTime);
-            };
-
-    /**
-     * Comparator to order bids by ascending time then ascending price. (for finding most recent
-     * bids).
-     */
-    public static final Comparator<Bid> ASCENDING_TIME_THEN_PRICE =
-            (left, right) -> {
-                int i = left.dateTime.compareTo(right.dateTime);
-                if (i != 0) {
-                    return i;
-                }
-                return Double.compare(left.price, right.price);
-            };
 
     /**
      * Id of auction this bid is for.
@@ -128,7 +61,7 @@ public class Bid implements KnownSize, Serializable {
      * event time.
      */
     @JsonProperty
-    public Instant dateTime;
+    public long timestamp;
 
     /**
      * Additional arbitrary payload for performance testing.
@@ -142,15 +75,15 @@ public class Bid implements KnownSize, Serializable {
         auction = 0;
         bidder = 0;
         price = 0;
-        dateTime = null;
+        timestamp = 0;
         extra = null;
     }
 
-    public Bid(long auction, long bidder, long price, Instant dateTime, String extra) {
+    public Bid(long auction, long bidder, long price, long timestamp, String extra) {
         this.auction = auction;
         this.bidder = bidder;
         this.price = price;
-        this.dateTime = dateTime;
+        this.timestamp = timestamp;
         this.extra = extra;
     }
 
@@ -158,7 +91,7 @@ public class Bid implements KnownSize, Serializable {
      * Return a copy of bid which capture the given annotation. (Used for debugging).
      */
     public Bid withAnnotation(String annotation) {
-        return new Bid(auction, bidder, price, dateTime, annotation + ": " + extra);
+        return new Bid(auction, bidder, price, timestamp, annotation + ": " + extra);
     }
 
     /**
@@ -173,7 +106,7 @@ public class Bid implements KnownSize, Serializable {
      */
     public Bid withoutAnnotation(String annotation) {
         if (hasAnnotation(annotation)) {
-            return new Bid(auction, bidder, price, dateTime, extra.substring(annotation.length() + 2));
+            return new Bid(auction, bidder, price, timestamp, extra.substring(annotation.length() + 2));
         } else {
             return this;
         }
@@ -192,13 +125,13 @@ public class Bid implements KnownSize, Serializable {
         return Objects.equals(auction, other.auction)
                 && Objects.equals(bidder, other.bidder)
                 && Objects.equals(price, other.price)
-                && Objects.equals(dateTime, other.dateTime)
+                && Objects.equals(timestamp, other.timestamp)
                 && Objects.equals(extra, other.extra);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(auction, bidder, price, dateTime, extra);
+        return Objects.hash(auction, bidder, price, timestamp, extra);
     }
 
     @Override
@@ -216,12 +149,15 @@ public class Bid implements KnownSize, Serializable {
     }
 
     public static String[] getFieldNames() {
-        return new String[]{"auction", "bidder", "price", "extra"};
+        return new String[]{"auction", "bidder", "price",
+                "timestamp","extra"};
     }
 
-
     public static TypeInformation[] getFieldTypes() {
-        return new TypeInformation[]{Types.LONG(), Types.LONG(), Types.LONG(), Types.STRING()};
+
+        return new TypeInformation[]{Types.LONG(), Types.LONG(), Types.LONG(),
+                Types.LONG(), Types.STRING()};
+
 
     }
 

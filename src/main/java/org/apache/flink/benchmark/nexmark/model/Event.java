@@ -17,13 +17,10 @@
  */
 package org.apache.flink.benchmark.nexmark.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+
 import java.io.Serializable;
 import javax.annotation.Nullable;
 import org.apache.beam.sdk.coders.Coder;
-import org.apache.beam.sdk.coders.CustomCoder;
 import org.apache.beam.sdk.coders.VarIntCoder;
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
@@ -70,50 +67,6 @@ public class Event implements KnownSize, Serializable {
   }
 
   private static final Coder<Integer> INT_CODER = VarIntCoder.of();
-
-  public static final Coder<Event> CODER =
-      new CustomCoder<Event>() {
-        @Override
-        public void encode(Event value, OutputStream outStream) throws IOException {
-          if (value.newPerson != null) {
-            INT_CODER.encode(Type.PERSON.value, outStream);
-            Person.CODER.encode(value.newPerson, outStream);
-          } else if (value.newAuction != null) {
-            INT_CODER.encode(Type.AUCTION.value, outStream);
-            Auction.CODER.encode(value.newAuction, outStream);
-          } else if (value.bid != null) {
-            INT_CODER.encode(Type.BID.value, outStream);
-            Bid.CODER.encode(value.bid, outStream);
-          } else {
-            throw new RuntimeException("invalid event");
-          }
-        }
-
-        @Override
-        public Event decode(InputStream inStream) throws IOException {
-          int tag = INT_CODER.decode(inStream);
-          if (tag == Type.PERSON.value) {
-            Person person = Person.CODER.decode(inStream);
-            return new Event(person);
-          } else if (tag == Type.AUCTION.value) {
-            Auction auction = Auction.CODER.decode(inStream);
-            return new Event(auction);
-          } else if (tag == Type.BID.value) {
-            Bid bid = Bid.CODER.decode(inStream);
-            return new Event(bid);
-          } else {
-            throw new RuntimeException("invalid event encoding");
-          }
-        }
-
-        @Override
-        public void verifyDeterministic() throws NonDeterministicException {}
-
-        @Override
-        public Object structuralValue(Event v) {
-          return v;
-        }
-      };
 
   @Nullable
   @org.apache.avro.reflect.Nullable public Person newPerson;

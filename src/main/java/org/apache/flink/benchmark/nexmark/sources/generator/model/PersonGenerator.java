@@ -17,6 +17,7 @@
  */
 package org.apache.flink.benchmark.nexmark.sources.generator.model;
 
+import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -53,7 +54,7 @@ public class PersonGenerator {
 
   /** Generate and return a random person with next available id. */
   public static Person nextPerson(
-      long nextEventId, Random random, DateTime timestamp, GeneratorConfig config) {
+      long nextEventId, Random random, long timestamp, GeneratorConfig config) {
 
     long id = lastBase0PersonId(nextEventId) + GeneratorConfig.FIRST_PERSON_ID;
     String name = nextPersonName(random);
@@ -64,7 +65,7 @@ public class PersonGenerator {
     int currentSize =
         8 + name.length() + email.length() + creditCard.length() + city.length() + state.length();
     String extra = nextExtra(random, currentSize, config.getAvgPersonByteSize());
-    return new Person(id, name, email, creditCard, city, state, timestamp.toInstant(), extra);
+    return new Person(id, name, email, creditCard, city, state,timestamp , extra);
 
   }
 

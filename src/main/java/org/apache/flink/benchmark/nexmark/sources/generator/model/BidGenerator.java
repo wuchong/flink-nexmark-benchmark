@@ -17,6 +17,7 @@
  */
 package org.apache.flink.benchmark.nexmark.sources.generator.model;
 
+import java.sql.Date;
 import java.util.Random;
 
 import org.apache.flink.benchmark.nexmark.model.Bid;
@@ -66,6 +67,6 @@ public class BidGenerator {
     long price = PriceGenerator.nextPrice(random);
     int currentSize = 8 + 8 + 8 + 8;
     String extra = nextExtra(random, currentSize, config.getAvgBidByteSize());
-    return new Bid(auction, bidder, price, new Instant(timestamp), extra);
+    return new Bid(auction, bidder, price, timestamp, extra);
   }
 }

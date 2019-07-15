@@ -20,24 +20,15 @@ package org.apache.flink.benchmark.nexmark.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
+import java.sql.Date;
 
-import org.apache.beam.sdk.coders.Coder;
-import org.apache.beam.sdk.coders.CoderException;
-import org.apache.beam.sdk.coders.CustomCoder;
-import org.apache.beam.sdk.coders.InstantCoder;
-import org.apache.beam.sdk.coders.StringUtf8Coder;
-import org.apache.beam.sdk.coders.VarLongCoder;
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
 import org.apache.flink.table.api.Types;
-import org.joda.time.Instant;
 
 
 /**
@@ -45,46 +36,6 @@ import org.joda.time.Instant;
  */
 @DefaultSchema(JavaFieldSchema.class)
 public class Person implements KnownSize, Serializable {
-    private static final Coder<Instant> INSTANT_CODER = InstantCoder.of();
-    private static final Coder<Long> LONG_CODER = VarLongCoder.of();
-    private static final Coder<String> STRING_CODER = StringUtf8Coder.of();
-    public static final Coder<Person> CODER =
-            new CustomCoder<Person>() {
-                @Override
-                public void encode(Person value, OutputStream outStream)
-                        throws CoderException, IOException {
-                    LONG_CODER.encode(value.id, outStream);
-                    STRING_CODER.encode(value.name, outStream);
-                    STRING_CODER.encode(value.emailAddress, outStream);
-                    STRING_CODER.encode(value.creditCard, outStream);
-                    STRING_CODER.encode(value.city, outStream);
-                    STRING_CODER.encode(value.state, outStream);
-                    INSTANT_CODER.encode(value.dateTime, outStream);
-                    STRING_CODER.encode(value.extra, outStream);
-                }
-
-                @Override
-                public Person decode(InputStream inStream) throws CoderException, IOException {
-                    long id = LONG_CODER.decode(inStream);
-                    String name = STRING_CODER.decode(inStream);
-                    String emailAddress = STRING_CODER.decode(inStream);
-                    String creditCard = STRING_CODER.decode(inStream);
-                    String city = STRING_CODER.decode(inStream);
-                    String state = STRING_CODER.decode(inStream);
-                    Instant dateTime = INSTANT_CODER.decode(inStream);
-                    String extra = STRING_CODER.decode(inStream);
-                    return new Person(id, name, emailAddress, creditCard, city, state, dateTime, extra);
-                }
-
-                @Override
-                public void verifyDeterministic() throws NonDeterministicException {
-                }
-
-                @Override
-                public Object structuralValue(Person v) {
-                    return v;
-                }
-            };
 
     /**
      * Id of person.
@@ -111,7 +62,7 @@ public class Person implements KnownSize, Serializable {
     public String state;
 
     @JsonProperty
-    public Instant dateTime;
+    public long timestamp;
 
     /**
      * Additional arbitrary payload for performance testing.
@@ -128,7 +79,7 @@ public class Person implements KnownSize, Serializable {
         creditCard = null;
         city = null;
         state = null;
-        dateTime = null;
+        timestamp = 0;
         extra = null;
     }
 
@@ -139,7 +90,7 @@ public class Person implements KnownSize, Serializable {
             String creditCard,
             String city,
             String state,
-            Instant dateTime,
+            long timestamp,
             String extra) {
         this.id = id;
         this.name = name;
@@ -147,18 +98,18 @@ public class Person implements KnownSize, Serializable {
         this.creditCard = creditCard;
         this.city = city;
         this.state = state;
-        this.dateTime = dateTime;
+        this.timestamp = timestamp;
         this.extra = extra;
     }
 
     public static String[] getFieldNames() {
         return new String[]{"id", "name", "emailAddress", "creditCard",
-                "city", "state", "extra"};
+                "city", "state", "timestamp", "extra"};
     }
 
     public static TypeInformation[] getFieldTypes() {
         return new TypeInformation[]{Types.LONG(), Types.STRING(), Types.STRING(), Types.STRING(),
-                Types.STRING(), Types.STRING(),  Types.STRING()};
+                Types.STRING(), Types.STRING(),  Types.LONG(), Types.STRING()};
     }
 
     /**
@@ -166,7 +117,7 @@ public class Person implements KnownSize, Serializable {
      */
     public Person withAnnotation(String annotation) {
         return new Person(
-                id, name, emailAddress, creditCard, city, state, dateTime, annotation + ": " + extra);
+                id, name, emailAddress, creditCard, city, state, timestamp, annotation + ": " + extra);
     }
 
     /**
@@ -188,7 +139,7 @@ public class Person implements KnownSize, Serializable {
                     creditCard,
                     city,
                     state,
-                    dateTime,
+                    timestamp,
                     extra.substring(annotation.length() + 2));
         } else {
             return this;
@@ -232,7 +183,7 @@ public class Person implements KnownSize, Serializable {
         }
         Person person = (Person) o;
         return id == person.id
-                && Objects.equal(dateTime, person.dateTime)
+                && Objects.equal(timestamp, person.timestamp)
                 && Objects.equal(name, person.name)
                 && Objects.equal(emailAddress, person.emailAddress)
                 && Objects.equal(creditCard, person.creditCard)
@@ -243,6 +194,6 @@ public class Person implements KnownSize, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, name, emailAddress, creditCard, city, state, dateTime, extra);
+        return Objects.hashCode(id, name, emailAddress, creditCard, city, state, timestamp, extra);
     }
 }

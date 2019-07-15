@@ -182,8 +182,4 @@ public class BoundedEventSource extends BoundedSource<Event> {
     // Nothing to validate.
   }
 
-  @Override
-  public Coder<Event> getDefaultOutputCoder() {
-    return Event.CODER;
-  }
 }

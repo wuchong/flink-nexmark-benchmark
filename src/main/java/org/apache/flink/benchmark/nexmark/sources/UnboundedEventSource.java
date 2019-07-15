@@ -324,10 +324,6 @@ public class UnboundedEventSource extends UnboundedSource<Event, GeneratorCheckp
     // Nothing to validate.
   }
 
-  @Override
-  public Coder<Event> getDefaultOutputCoder() {
-    return Event.CODER;
-  }
 
   @Override
   public String toString() {

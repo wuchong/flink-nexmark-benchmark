@@ -20,24 +20,16 @@ package org.apache.flink.benchmark.nexmark.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
+import java.sql.Date;
 
-import org.apache.beam.sdk.coders.Coder;
-import org.apache.beam.sdk.coders.CoderException;
-import org.apache.beam.sdk.coders.CustomCoder;
-import org.apache.beam.sdk.coders.InstantCoder;
-import org.apache.beam.sdk.coders.StringUtf8Coder;
-import org.apache.beam.sdk.coders.VarLongCoder;
+
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
 import org.apache.flink.table.api.Types;
-import org.joda.time.Instant;
 
 
 /**
@@ -45,57 +37,7 @@ import org.joda.time.Instant;
  */
 @DefaultSchema(JavaFieldSchema.class)
 public class Auction implements KnownSize, Serializable {
-    private static final Coder<Instant> INSTANT_CODER = InstantCoder.of();
-    private static final Coder<Long> LONG_CODER = VarLongCoder.of();
-    private static final Coder<String> STRING_CODER = StringUtf8Coder.of();
 
-    public static final Coder<Auction> CODER =
-            new CustomCoder<Auction>() {
-                @Override
-                public void encode(Auction value, OutputStream outStream)
-                        throws CoderException, IOException {
-                    LONG_CODER.encode(value.id, outStream);
-                    STRING_CODER.encode(value.itemName, outStream);
-                    STRING_CODER.encode(value.description, outStream);
-                    LONG_CODER.encode(value.initialBid, outStream);
-                    LONG_CODER.encode(value.reserve, outStream);
-                    INSTANT_CODER.encode(value.dateTime, outStream);
-                    INSTANT_CODER.encode(value.expires, outStream);
-                    LONG_CODER.encode(value.seller, outStream);
-                    LONG_CODER.encode(value.category, outStream);
-                    STRING_CODER.encode(value.extra, outStream);
-                }
-
-                @Override
-                public Auction decode(InputStream inStream) throws CoderException, IOException {
-                    long id = LONG_CODER.decode(inStream);
-                    String itemName = STRING_CODER.decode(inStream);
-                    String description = STRING_CODER.decode(inStream);
-                    long initialBid = LONG_CODER.decode(inStream);
-                    long reserve = LONG_CODER.decode(inStream);
-                    Instant dateTime = INSTANT_CODER.decode(inStream);
-                    Instant expires = INSTANT_CODER.decode(inStream);
-                    long seller = LONG_CODER.decode(inStream);
-                    long category = LONG_CODER.decode(inStream);
-                    String extra = STRING_CODER.decode(inStream);
-                    return new Auction(
-                            id,
-                            itemName,
-                            description,
-                            initialBid,
-                            reserve,
-                            dateTime,
-                            expires,
-                            seller,
-                            category,
-                            extra);
-                }
-
-                @Override
-                public Object structuralValue(Auction v) {
-                    return v;
-                }
-            };
 
     /**
      * Id of auction.
@@ -125,13 +67,13 @@ public class Auction implements KnownSize, Serializable {
     public long reserve;
 
     @JsonProperty
-    public Instant dateTime;
+    public long timestamp;
 
     /**
      * When does auction expire? (ms since epoch). Bids at or after this time are ignored.
      */
     @JsonProperty
-    public Instant expires;
+    public long expires;
 
     /**
      * Id of person who instigated auction.
@@ -159,8 +101,8 @@ public class Auction implements KnownSize, Serializable {
         description = null;
         initialBid = 0;
         reserve = 0;
-        dateTime = null;
-        expires = null;
+        timestamp = 0;
+        expires = 0;
         seller = 0;
         category = 0;
         extra = null;
@@ -172,8 +114,8 @@ public class Auction implements KnownSize, Serializable {
             String description,
             long initialBid,
             long reserve,
-            Instant dateTime,
-            Instant expires,
+            long tiemstamp,
+            long expires,
             long seller,
             long category,
             String extra) {
@@ -182,7 +124,7 @@ public class Auction implements KnownSize, Serializable {
         this.description = description;
         this.initialBid = initialBid;
         this.reserve = reserve;
-        this.dateTime = dateTime;
+        this.timestamp = tiemstamp;
         this.expires = expires;
         this.seller = seller;
         this.category = category;
@@ -192,12 +134,12 @@ public class Auction implements KnownSize, Serializable {
 
     public static String[] getFieldNames() {
         return new String[]{"id", "itemName", "description", "initialBid",
-                "reserve", "seller", "category", "extra"};
+                "reserve", "timestamp", "expires", "seller", "category", "extra"};
     }
 
     public static TypeInformation[] getFieldTypes() {
         return new TypeInformation[]{Types.LONG(), Types.STRING(), Types.STRING(), Types.LONG(),
-                Types.LONG(), Types.LONG(), Types.LONG(), Types.STRING()};
+                Types.LONG(), Types.LONG(), Types.LONG(), Types.LONG(), Types.LONG(), Types.STRING()};
     }
 
     /**
@@ -210,7 +152,7 @@ public class Auction implements KnownSize, Serializable {
                 description,
                 initialBid,
                 reserve,
-                dateTime,
+                timestamp,
                 expires,
                 seller,
                 category,
@@ -235,7 +177,7 @@ public class Auction implements KnownSize, Serializable {
                     description,
                     initialBid,
                     reserve,
-                    dateTime,
+                    timestamp,
                     expires,
                     seller,
                     category,
@@ -283,7 +225,7 @@ public class Auction implements KnownSize, Serializable {
         return id == auction.id
                 && initialBid == auction.initialBid
                 && reserve == auction.reserve
-                && Objects.equal(dateTime, auction.dateTime)
+                && Objects.equal(timestamp, auction.timestamp)
                 && Objects.equal(expires, auction.expires)
                 && seller == auction.seller
                 && category == auction.category
@@ -295,7 +237,7 @@ public class Auction implements KnownSize, Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(
-                id, itemName, description, initialBid, reserve, dateTime, expires, seller, category, extra);
+                id, itemName, description, initialBid, reserve, timestamp, expires, seller, category, extra);
     }
 
 }

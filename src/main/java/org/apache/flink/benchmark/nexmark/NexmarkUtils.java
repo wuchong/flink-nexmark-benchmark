@@ -61,20 +61,11 @@ import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Splitter;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Strings;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.collect.ImmutableList;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.hash.Hashing;
-import org.apache.flink.benchmark.nexmark.model.Auction;
-import org.apache.flink.benchmark.nexmark.model.AuctionBid;
-import org.apache.flink.benchmark.nexmark.model.AuctionCount;
-import org.apache.flink.benchmark.nexmark.model.AuctionPrice;
-import org.apache.flink.benchmark.nexmark.model.Bid;
-import org.apache.flink.benchmark.nexmark.model.BidsPerSession;
-import org.apache.flink.benchmark.nexmark.model.CategoryPrice;
-import org.apache.flink.benchmark.nexmark.model.Done;
+
+
 import org.apache.flink.benchmark.nexmark.model.Event;
-import org.apache.flink.benchmark.nexmark.model.IdNameReserve;
 import org.apache.flink.benchmark.nexmark.model.KnownSize;
-import org.apache.flink.benchmark.nexmark.model.NameCityStateId;
-import org.apache.flink.benchmark.nexmark.model.Person;
-import org.apache.flink.benchmark.nexmark.model.SellerPrice;
+
 import org.apache.flink.benchmark.nexmark.sources.BoundedEventSource;
 import org.apache.flink.benchmark.nexmark.sources.UnboundedEventSource;
 import org.apache.flink.benchmark.nexmark.sources.generator.Generator;
@@ -340,34 +331,6 @@ public class NexmarkUtils {
 
   public static final Instant END_OF_TIME =
       BoundedWindow.TIMESTAMP_MAX_VALUE.minus(Duration.standardDays(365));
-
-  /** Setup pipeline with codes and some other options. */
-  public static void setupPipeline(CoderStrategy coderStrategy, Pipeline p) {
-    CoderRegistry registry = p.getCoderRegistry();
-    switch (coderStrategy) {
-      case HAND:
-        registry.registerCoderForClass(Auction.class, Auction.CODER);
-        registry.registerCoderForClass(AuctionBid.class, AuctionBid.CODER);
-        registry.registerCoderForClass(AuctionCount.class, AuctionCount.CODER);
-        registry.registerCoderForClass(AuctionPrice.class, AuctionPrice.CODER);
-        registry.registerCoderForClass(Bid.class, Bid.CODER);
-        registry.registerCoderForClass(CategoryPrice.class, CategoryPrice.CODER);
-        registry.registerCoderForClass(Event.class, Event.CODER);
-        registry.registerCoderForClass(IdNameReserve.class, IdNameReserve.CODER);
-        registry.registerCoderForClass(NameCityStateId.class, NameCityStateId.CODER);
-        registry.registerCoderForClass(Person.class, Person.CODER);
-        registry.registerCoderForClass(SellerPrice.class, SellerPrice.CODER);
-        registry.registerCoderForClass(Done.class, Done.CODER);
-        registry.registerCoderForClass(BidsPerSession.class, BidsPerSession.CODER);
-        break;
-      case AVRO:
-        registry.registerCoderProvider(AvroCoder.getCoderProvider());
-        break;
-      case JAVA:
-        registry.registerCoderProvider(SerializableCoder.getCoderProvider());
-        break;
-    }
-  }
 
   /** Return a generator config to match the given {@code options}. */
   private static GeneratorConfig standardGeneratorConfig(NexmarkConfiguration configuration) {
