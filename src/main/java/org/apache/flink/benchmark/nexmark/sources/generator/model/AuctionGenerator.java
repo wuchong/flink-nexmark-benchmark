@@ -17,16 +17,18 @@
  */
 package org.apache.flink.benchmark.nexmark.sources.generator.model;
 
-import java.util.Random;
-
 import org.apache.flink.benchmark.nexmark.model.Auction;
 import org.apache.flink.benchmark.nexmark.sources.generator.GeneratorConfig;
-import org.joda.time.Instant;
 
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.LongGenerator.*;
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.PersonGenerator.*;
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.PriceGenerator.*;
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.StringsGenerator.*;
+import java.sql.Timestamp;
+import java.util.Random;
+
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.LongGenerator.nextLong;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.PersonGenerator.lastBase0PersonId;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.PersonGenerator.nextBase0PersonId;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.PriceGenerator.nextPrice;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.StringsGenerator.nextExtra;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.StringsGenerator.nextString;
 
 
 /**
@@ -79,8 +81,8 @@ public class AuctionGenerator {
                 desc,
                 initialBid,
                 reserve,
-                timestamp,
-                expires,
+                new Timestamp(timestamp),
+                new Timestamp(expires),
                 seller,
                 category,
                 extra);

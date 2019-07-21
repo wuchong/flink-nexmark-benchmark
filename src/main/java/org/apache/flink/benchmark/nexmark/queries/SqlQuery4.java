@@ -26,8 +26,8 @@ package org.apache.flink.benchmark.nexmark.queries;
 public class SqlQuery4 {
     private static final String TEMPLATE = "" +
             "SELECT AVG(Q.final), C.id " +
-            "  FROM %s C, (SELECT MAX(B.price) AS final, A.category " +
-            "                    FROM %s A , %s B " +
+            "  FROM %1$s C, (SELECT MAX(B.price) AS final, A.category " +
+            "                    FROM %2$s A , %3$s B " +
             "                    WHERE A.id=B.auction AND B.ts < A.expires AND A.expires < CURRENT_TIMESTAMP " +
             "                    GROUP BY A.id, A.category) Q " +
             "  WHERE Q.category = C.id " +

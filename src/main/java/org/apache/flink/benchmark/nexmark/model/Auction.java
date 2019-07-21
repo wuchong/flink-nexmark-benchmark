@@ -19,16 +19,15 @@ package org.apache.flink.benchmark.nexmark.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
-import java.io.Serializable;
-
-
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
 import org.apache.flink.table.api.Types;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 
 /**
@@ -65,13 +64,13 @@ public class Auction implements KnownSize, Serializable {
     public long reserve;
 
     @JsonProperty
-    public long ts;
+    public Timestamp ts;
 
     /**
      * When does auction expire? (ms since epoch). Bids at or after this time are ignored.
      */
     @JsonProperty
-    public long expires;
+    public Timestamp expires;
 
     /**
      * Id of person who instigated auction.
@@ -99,8 +98,8 @@ public class Auction implements KnownSize, Serializable {
         description = null;
         initialBid = 0;
         reserve = 0;
-        ts = 0;
-        expires = 0;
+        ts = new Timestamp(0);
+        expires = new Timestamp(0);
         seller = 0;
         category = 0;
         extra = null;
@@ -112,8 +111,8 @@ public class Auction implements KnownSize, Serializable {
             String description,
             long initialBid,
             long reserve,
-            long tiemstamp,
-            long expires,
+            Timestamp tiemstamp,
+            Timestamp expires,
             long seller,
             long category,
             String extra) {

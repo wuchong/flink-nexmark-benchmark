@@ -44,7 +44,7 @@ public class FlinkQueryRunner {
 
     private Table personTable;
 
-    private long numEvents = 10000L;
+    private long numEvents = 100000L;
 
     private GeneratorConfig initialConfig = makeConfig(numEvents);
 
@@ -72,10 +72,11 @@ public class FlinkQueryRunner {
                         Time.seconds(5)) {
                     @Override
                     public long extractTimestamp(Bid bid) {
-                        return bid.ts;
+                        return bid.ts.getTime();
                     }
                 });
-        bidTable = tableEnv.fromDataStream(bidStream, "auction, bidder, price, ts.rowtime, extra");
+        bidTable = tableEnv.fromDataStream(bidStream, "auction, bidder, price, " +
+                "ts, extra, eventTime.rowtime");
         auctionStream = env.fromCollection(inMemoryEvents)
                 .filter(event -> event.newAuction != null)
                 .map(event -> event.newAuction)
@@ -83,28 +84,28 @@ public class FlinkQueryRunner {
                         Time.seconds(5)) {
                     @Override
                     public long extractTimestamp(Auction auction) {
-                        return auction.expires;
+                        return auction.expires.getTime();
                     }
                 });
         auctionTable = tableEnv.fromDataStream(auctionStream,
-                "id, itemName, description, initialBid, reserve, ts, expires.rowtime, seller, " +
-                        "category, extra");
+                "id, itemName, description, initialBid, reserve, ts, expires, seller, " +
+                        "category, extra, eventTime.rowtime");
         personStream = env.fromCollection(inMemoryEvents)
                 .filter(event -> event.newPerson != null)
                 .map(event -> event.newPerson)
                 .assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Person>(Time.seconds(5)) {
                     @Override
                     public long extractTimestamp(Person person) {
-                        return person.ts;
+                        return person.ts.getTime();
                     }
                 });
         personTable = tableEnv.fromDataStream(personStream, "id, name, emailAddress, " +
-                "creditCard, city, state, ts.rowtime, extra");
+                "creditCard, city, state, ts, extra, eventTime.rowtime");
 
     }
 
     public void executeSqlQuery(String sqlQuery) throws Exception{
-        System.out.println(sqlQuery);
+        LOG.info(sqlQuery);
         Table result = tableEnv.sqlQuery(sqlQuery);
         DataStream<Tuple2<Boolean,Row>> stream = tableEnv.toRetractStream(result, Row.class);
         stream.print();

@@ -17,17 +17,17 @@
  */
 package org.apache.flink.benchmark.nexmark.sources.generator.model;
 
-import java.sql.Date;
+import org.apache.flink.benchmark.nexmark.model.Person;
+import org.apache.flink.benchmark.nexmark.sources.generator.GeneratorConfig;
+
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.flink.benchmark.nexmark.model.Person;
-import org.apache.flink.benchmark.nexmark.sources.generator.GeneratorConfig;
-import org.joda.time.DateTime;
-
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.LongGenerator.*;
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.StringsGenerator.*;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.LongGenerator.nextLong;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.StringsGenerator.nextExtra;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.StringsGenerator.nextString;
 
 
 /** Generates people. */
@@ -65,7 +65,7 @@ public class PersonGenerator {
     int currentSize =
         8 + name.length() + email.length() + creditCard.length() + city.length() + state.length();
     String extra = nextExtra(random, currentSize, config.getAvgPersonByteSize());
-    return new Person(id, name, email, creditCard, city, state,timestamp , extra);
+    return new Person(id, name, email, creditCard, city, state, new Timestamp(timestamp), extra);
 
   }
 

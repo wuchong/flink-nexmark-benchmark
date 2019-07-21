@@ -17,16 +17,17 @@
  */
 package org.apache.flink.benchmark.nexmark.sources.generator.model;
 
-import java.sql.Date;
-import java.util.Random;
-
 import org.apache.flink.benchmark.nexmark.model.Bid;
 import org.apache.flink.benchmark.nexmark.sources.generator.GeneratorConfig;
-import org.joda.time.Instant;
 
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.AuctionGenerator.*;
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.PersonGenerator.*;
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.StringsGenerator.*;
+import java.sql.Timestamp;
+import java.util.Random;
+
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.AuctionGenerator.lastBase0AuctionId;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.AuctionGenerator.nextBase0AuctionId;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.PersonGenerator.lastBase0PersonId;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.PersonGenerator.nextBase0PersonId;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.StringsGenerator.nextExtra;
 
 
 /** Generates bids. */
@@ -67,6 +68,6 @@ public class BidGenerator {
     long price = PriceGenerator.nextPrice(random);
     int currentSize = 8 + 8 + 8 + 8;
     String extra = nextExtra(random, currentSize, config.getAvgBidByteSize());
-    return new Bid(auction, bidder, price, timestamp, extra);
+    return new Bid(auction, bidder, price, new Timestamp(timestamp), extra);
   }
 }

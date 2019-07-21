@@ -23,7 +23,7 @@ public class SqlQuery6 {
     private static final String TEMPLATE = "SELECT AVG(Q.final), Q.seller " +
             "  FROM (SELECT MAX(B.price) AS final, A.seller " +
             "        FROM %1$s A , %2$s B " +
-            "        WHERE A.id=B.auction AND B.ts < A.expires AND A.expires < CURRENT_TIMESTAMP " +
+            "        WHERE A.id=B.auction AND B.eventTime < A.expires AND A.expires < CURRENT_TIMESTAMP " +
             "        GROUP BY A.id, A.seller ORDER BY A.expires DESC LIMIT 10 )  Q " +
             "  GROUP BY Q.seller ";
 

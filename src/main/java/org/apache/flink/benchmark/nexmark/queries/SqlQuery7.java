@@ -23,15 +23,15 @@ public class SqlQuery7 {
     private static final String TEMPLATE =
             ""
                     + " SELECT B.auction, B.price, B.bidder, B.extra "
-                    + "    FROM (SELECT B.auction, B.price, B.bidder, B.ts, B.extra, "
-                    + "       TUMBLE_START(B.ts, INTERVAL '%1$d' SECOND) AS starttime "
+                    + "    FROM (SELECT B.auction, B.price, B.bidder, B.eventTime, B.extra, "
+                    + "       TUMBLE_START(B.eventTime, INTERVAL '%1$d' SECOND) AS starttime "
                     + "    FROM %2$s B "
-                    + "    GROUP BY B.auction, B.price, B.bidder, B.ts, B.extra, "
-                    + "       TUMBLE(B.ts, INTERVAL '%1$d' SECOND)) B "
+                    + "    GROUP BY B.auction, B.price, B.bidder, B.eventTime, B.extra, "
+                    + "       TUMBLE(B.eventTime, INTERVAL '%1$d' SECOND)) B "
                     + " JOIN (SELECT MAX(B1.price) AS maxprice, "
-                    + "       TUMBLE_START(B1.ts, INTERVAL '%1$d' SECOND) AS starttime "
+                    + "       TUMBLE_START(B1.eventTime, INTERVAL '%1$d' SECOND) AS starttime "
                     + "    FROM %2$s B1 "
-                    + "    GROUP BY TUMBLE(B1.ts, INTERVAL '%1$d' SECOND)) B1 "
+                    + "    GROUP BY TUMBLE(B1.eventTime, INTERVAL '%1$d' SECOND)) B1 "
                     + " ON B.starttime = B1.starttime AND B.price = B1.maxprice ";
 
     public static String getQuery(String bidTableName){
