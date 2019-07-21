@@ -91,9 +91,15 @@ public class FlinkQueryRunner {
                         "category, extra");
         personStream = env.fromCollection(inMemoryEvents)
                 .filter(event -> event.newPerson != null)
-                .map(event -> event.newPerson);
-        personTable = tableEnv.fromDataStream(personStream,
-                TestUtil.formatFields(Person.getFieldNames()));
+                .map(event -> event.newPerson)
+                .assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<Person>(Time.seconds(5)) {
+                    @Override
+                    public long extractTimestamp(Person person) {
+                        return person.ts;
+                    }
+                });
+        personTable = tableEnv.fromDataStream(personStream, "id, name, emailAddress, " +
+                "creditCard, city, state, ts.rowtime, extra");
 
     }
 
