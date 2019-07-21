@@ -1,12 +1,7 @@
 package org.apache.flink.benchmark.runner.flink;
 
-import org.apache.flink.api.scala.typeutils.Types;
-import org.apache.flink.benchmark.nexmark.model.Bid;
-import org.apache.flink.benchmark.testutils.TestUtil;
-import org.apache.flink.table.api.Table;
+import org.apache.flink.benchmark.nexmark.queries.SqlQuery1;
 import org.apache.flink.table.functions.ScalarFunction;
-import org.apache.flink.table.sinks.CsvTableSink;
-import org.apache.flink.table.sinks.TableSink;
 import org.junit.Test;
 
 
@@ -27,6 +22,7 @@ import org.junit.Test;
 //TODO: how to support Instant time?
 public class Query1Test extends AbstractQueryTest {
 
+
     public static class DolToEur extends ScalarFunction {
 
         public static final String functionName = "DolToEur";
@@ -36,23 +32,13 @@ public class Query1Test extends AbstractQueryTest {
         }
     }
 
-    @Override
+
     @Test
     public void run() throws Exception {
 
-        tableEnv.registerFunction(DolToEur.functionName, new DolToEur());
-        tableEnv.registerTableSink(sinkTableName, Bid.getFieldNames(), Bid.getFieldTypes(), sink);
+        flinkQueryRunner.getTableEnv().registerFunction(DolToEur.functionName, new DolToEur());
 
-
-        String query1 = String.format("SELECT auction, bidder, %s(price) as price, timestamp, extra FROM %s", DolToEur.functionName, bidTable) ;
-
-        Table result = tableEnv.sqlQuery(query1);
-
-        // Write Results to File
-
-        result.insertInto(sinkTableName);
-
-        env.execute();
+        flinkQueryRunner.executeSqlQuery(SqlQuery1.getQuery(flinkQueryRunner.getBidTable().toString()));
     }
 
 

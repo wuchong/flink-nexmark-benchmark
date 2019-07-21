@@ -161,5 +161,43 @@ public class Bid implements KnownSize, Serializable {
 
     }
 
+    public long getAuction() {
+        return auction;
+    }
 
+    public void setAuction(long auction) {
+        this.auction = auction;
+    }
+
+    public long getBidder() {
+        return bidder;
+    }
+
+    public void setBidder(long bidder) {
+        this.bidder = bidder;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
+    }
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
+    }
 }
