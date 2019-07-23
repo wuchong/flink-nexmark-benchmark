@@ -20,9 +20,23 @@ import org.apache.flink.benchmark.nexmark.NexmarkConfiguration;
  */
 
 public class SqlQuery7 {
+    /*private static final String TEMPLATE =
+            ""
+                    + " SELECT B.auction, B.price, B.bidder, B.extra, B.ts "
+                    + "    FROM (SELECT B.auction, B.price, B.bidder, B.eventTime, B.extra, "
+                    + "       TUMBLE_START(B.eventTime, INTERVAL '%1$d' SECOND) AS starttime "
+                    + "    FROM %2$s B "
+                    + "    GROUP BY B.auction, B.price, B.bidder, B.eventTime, B.extra, "
+                    + "       TUMBLE(B.eventTime, INTERVAL '%1$d' SECOND)) B "
+                    + " JOIN (SELECT MAX(B1.price) AS maxprice, "
+                    + "       TUMBLE_START(B1.eventTime, INTERVAL '%1$d' SECOND) AS starttime "
+                    + "    FROM %2$s B1 "
+                    + "    GROUP BY TUMBLE(B1.eventTime, INTERVAL '%1$d' SECOND)) B1 "
+                    + " ON B.starttime = B1.starttime AND B.price = B1.maxprice ";*/
+
     private static final String TEMPLATE =
             ""
-                    + " SELECT B.auction, B.price, B.bidder, B.extra "
+                    + " SELECT B.auction, B.price, B.bidder, B.eventTime, B.extra "
                     + "    FROM (SELECT B.auction, B.price, B.bidder, B.eventTime, B.extra, "
                     + "       TUMBLE_START(B.eventTime, INTERVAL '%1$d' SECOND) AS starttime "
                     + "    FROM %2$s B "
