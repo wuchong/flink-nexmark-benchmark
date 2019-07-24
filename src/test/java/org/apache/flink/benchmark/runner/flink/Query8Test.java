@@ -3,6 +3,7 @@ package org.apache.flink.benchmark.runner.flink;
 import org.apache.flink.benchmark.nexmark.queries.SqlQuery8;
 import org.junit.Test;
 
+
 public class Query8Test extends AbstractQueryTest{
 
     @Test

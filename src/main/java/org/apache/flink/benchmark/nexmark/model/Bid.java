@@ -21,9 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
-import org.apache.flink.table.api.Types;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -145,19 +143,6 @@ public class Bid implements KnownSize, Serializable {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static String[] getFieldNames() {
-        return new String[]{"auction", "bidder", "price",
-                "ts","extra"};
-    }
-
-    public static TypeInformation[] getFieldTypes() {
-
-        return new TypeInformation[]{Types.LONG(), Types.LONG(), Types.LONG(),
-                Types.LONG(), Types.STRING()};
-
-
     }
 
     public long getAuction() {

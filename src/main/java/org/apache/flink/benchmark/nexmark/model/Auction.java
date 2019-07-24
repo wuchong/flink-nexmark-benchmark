@@ -22,9 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
-import org.apache.flink.table.api.Types;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -126,17 +124,6 @@ public class Auction implements KnownSize, Serializable {
         this.seller = seller;
         this.category = category;
         this.extra = extra;
-    }
-
-
-    public static String[] getFieldNames() {
-        return new String[]{"id", "itemName", "description", "initialBid",
-                "reserve", "ts", "expires", "seller", "category", "extra"};
-    }
-
-    public static TypeInformation[] getFieldTypes() {
-        return new TypeInformation[]{Types.LONG(), Types.STRING(), Types.STRING(), Types.LONG(),
-                Types.LONG(), Types.LONG(), Types.LONG(), Types.LONG(), Types.LONG(), Types.STRING()};
     }
 
     /**

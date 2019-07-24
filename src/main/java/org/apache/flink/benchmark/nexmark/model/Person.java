@@ -22,9 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
-import org.apache.flink.table.api.Types;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -101,15 +99,6 @@ public class Person implements KnownSize, Serializable {
         this.extra = extra;
     }
 
-    public static String[] getFieldNames() {
-        return new String[]{"id", "name", "emailAddress", "creditCard",
-                "city", "state", "ts", "extra"};
-    }
-
-    public static TypeInformation[] getFieldTypes() {
-        return new TypeInformation[]{Types.LONG(), Types.STRING(), Types.STRING(), Types.STRING(),
-                Types.STRING(), Types.STRING(),  Types.LONG(), Types.STRING()};
-    }
 
     /**
      * Return a copy of person which capture the given annotation. (Used for debugging).
