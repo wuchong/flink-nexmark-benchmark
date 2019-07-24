@@ -23,6 +23,8 @@ import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
+import org.apache.flink.benchmark.nexmark.model.avro.AvroAuction;
+
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -223,5 +225,10 @@ public class Auction implements KnownSize, Serializable {
         return Objects.hashCode(
                 id, itemName, description, initialBid, reserve, ts, expires, seller, category, extra);
     }
+
+    /*public AvroAuction toAvro(){
+        AvroAuction avroAuction = new AvroAuction();
+        avroAuction
+    }*/
 
 }
