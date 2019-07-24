@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -42,7 +43,6 @@ public class AvroTest {
         DataFileWriter<AvroEvent> dataFileWriter = new DataFileWriter<AvroEvent>(eventDatumWriter);
         dataFileWriter.create(AvroEvent.SCHEMA$, new File(fileName));
         for (int i = 0; i < n; i++) {
-            //AvroEvent event1 = generator.nextEvent().event.toAvro();
             dataFileWriter.append(events.get(i).toAvro());
         }
         dataFileWriter.close();
@@ -53,10 +53,20 @@ public class AvroTest {
         DataFileReader<AvroEvent> dataFileReader = new DataFileReader<AvroEvent>(new File(fileName), userDatumReader);
         for(int i = 0; i < n; i++){
             AvroEvent avroEvent = dataFileReader.next();
-            System.out.println(avroEvent.toString());
+            //System.out.println(avroEvent.toString());
             assertEquals(avroEvent.toString(), events.get(i).toAvro().toString());
         }
 
+    }
+
+    @Test
+    public void testEncodeDecode() throws Exception{
+        for(int i = 0; i < n; i++){
+            AvroEvent encodeEvent = events.get(i).toAvro();
+            ByteBuffer buf = AvroEvent.getEncoder().encode(encodeEvent);
+            AvroEvent decodeEvent = AvroEvent.getDecoder().decode(buf);
+            assertEquals(encodeEvent.toString(), decodeEvent.toString());
+        }
     }
 
     @After
