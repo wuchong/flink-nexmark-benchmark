@@ -25,6 +25,7 @@ import org.apache.beam.sdk.coders.VarIntCoder;
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
+import org.apache.flink.benchmark.nexmark.model.avro.AvroEvent;
 
 
 /**
@@ -84,11 +85,16 @@ public class Event implements KnownSize, Serializable {
     bid = null;
   }
 
+  public Event(AvroEvent arvoEvent){
+
+  }
+
   public Event(Person newPerson) {
     this.newPerson = newPerson;
     newAuction = null;
     bid = null;
   }
+
 
   public Event(Auction newAuction) {
     newPerson = null;

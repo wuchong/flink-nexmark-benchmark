@@ -1,0 +1,49 @@
+{
+  "namespace": "org.apache.flink.benchmark.nexmark.model.avro",
+  "type": "record",
+  "name": "AvroEvent",
+  "fields": [
+    {"name": "bid", "type":
+    {"type": "record",
+      "name": "AvroBid",
+      "fields": [
+        {"name": "auction", "type": "long"},
+        {"name": "bidder", "type": "long"},
+        {"name": "price", "type": "long"},
+        {"name": "ts", "type": "long"},
+        {"name": "extra", "type": ["string", "null"]}
+      ]}
+    },
+    {"name": "person", "type":
+    {"type": "record",
+      "name": "AvroPerson",
+      "fields": [
+        {"name": "id", "type": "long"},
+        {"name": "name", "type": "string"},
+        {"name": "emailAddress", "type": "string"},
+        {"name": "creditCard", "type": "string"},
+        {"name": "city", "type": "string"},
+        {"name": "state", "type": "string"},
+        {"name": "ts", "type": "long"},
+        {"name": "extra", "type": ["string", "null"]}
+      ]}
+    },
+
+    {"name": "auction", "type":
+    {"type": "record",
+      "name": "AvroAuction",
+      "fields": [
+        {"name": "id", "type": "long"},
+        {"name": "itemName", "type": "string"},
+        {"name": "description", "type": "string"},
+        {"name": "initialBid", "type": "long"},
+        {"name": "reserve", "type": "long"},
+        {"name": "ts", "type": "long"},
+        {"name": "expires", "type": "long"},
+        {"name": "seller", "type": "long"},
+        {"name": "category", "type": "long"},
+        {"name": "extra", "type": ["string", "null"]}
+      ]}
+    }
+  ]
+}
