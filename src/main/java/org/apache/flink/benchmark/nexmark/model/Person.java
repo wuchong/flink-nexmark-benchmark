@@ -23,6 +23,7 @@ import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
+import org.apache.flink.benchmark.nexmark.model.avro.AvroPerson;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -183,5 +184,30 @@ public class Person implements KnownSize, Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id, name, emailAddress, creditCard, city, state, ts, extra);
+    }
+
+
+    public AvroPerson toAvro(){
+        AvroPerson avroPerson = AvroPerson.newBuilder()
+                .setId(this.id)
+                .setName(this.name)
+                .setEmailAddress(this.emailAddress)
+                .setCreditCard(this.creditCard)
+                .setCity(this.city)
+                .setState(this.state)
+                .setTs(this.ts.getTime())
+                .setExtra(this.extra).build();
+        return avroPerson;
+    }
+
+    public Person(AvroPerson avroPerson){
+        this.id = avroPerson.getId();
+        this.name = avroPerson.getName().toString();
+        this.emailAddress = avroPerson.getEmailAddress().toString();
+        this.creditCard = avroPerson.getCreditCard().toString();
+        this.city = avroPerson.getCity().toString();
+        this.state = avroPerson.getState().toString();
+        this.ts = new Timestamp(avroPerson.getTs());
+        this.extra = avroPerson.getExtra().toString();
     }
 }

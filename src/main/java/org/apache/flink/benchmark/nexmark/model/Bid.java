@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
+import org.apache.flink.benchmark.nexmark.model.avro.AvroBid;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -183,5 +184,31 @@ public class Bid implements KnownSize, Serializable {
 
     public void setExtra(String extra) {
         this.extra = extra;
+    }
+
+
+    /*
+    auction = 0;
+        bidder = 0;
+        price = 0;
+        ts = new Timestamp(0);
+        extra = null;
+     */
+    public AvroBid toAvro(){
+        AvroBid avroBid = AvroBid.newBuilder()
+                .setAuction(this.auction)
+                .setBidder(this.bidder)
+                .setPrice(this.price)
+                .setTs(this.ts.getTime())
+                .setExtra(this.extra).build();
+        return avroBid;
+    }
+
+    public Bid(AvroBid avroBid){
+        this.auction = avroBid.getAuction();
+        this.bidder = avroBid.getBidder();
+        this.price = avroBid.getPrice();
+        this.ts = new Timestamp(avroBid.getTs());
+        this.extra = avroBid.getExtra().toString();
     }
 }

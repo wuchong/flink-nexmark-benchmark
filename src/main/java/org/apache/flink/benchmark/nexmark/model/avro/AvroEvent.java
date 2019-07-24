@@ -5,17 +5,15 @@
  */
 package org.apache.flink.benchmark.nexmark.model.avro;
 
-import org.apache.avro.generic.GenericArray;
-import org.apache.avro.specific.SpecificData;
-import org.apache.avro.util.Utf8;
-import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
+import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.SchemaStore;
+import org.apache.avro.specific.SpecificData;
 
 @org.apache.avro.specific.AvroGenerated
 public class AvroEvent extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 3639880639081132328L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroEvent\",\"namespace\":\"org.apache.flink.benchmark.nexmark.model.avro\",\"fields\":[{\"name\":\"bid\",\"type\":{\"type\":\"record\",\"name\":\"AvroBid\",\"fields\":[{\"name\":\"auction\",\"type\":\"long\"},{\"name\":\"bidder\",\"type\":\"long\"},{\"name\":\"price\",\"type\":\"long\"},{\"name\":\"ts\",\"type\":\"long\"},{\"name\":\"extra\",\"type\":[\"string\",\"null\"]}]}},{\"name\":\"person\",\"type\":{\"type\":\"record\",\"name\":\"AvroPerson\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"emailAddress\",\"type\":\"string\"},{\"name\":\"creditCard\",\"type\":\"string\"},{\"name\":\"city\",\"type\":\"string\"},{\"name\":\"state\",\"type\":\"string\"},{\"name\":\"ts\",\"type\":\"long\"},{\"name\":\"extra\",\"type\":[\"string\",\"null\"]}]}},{\"name\":\"auction\",\"type\":{\"type\":\"record\",\"name\":\"AvroAuction\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"itemName\",\"type\":\"string\"},{\"name\":\"description\",\"type\":\"string\"},{\"name\":\"initialBid\",\"type\":\"long\"},{\"name\":\"reserve\",\"type\":\"long\"},{\"name\":\"ts\",\"type\":\"long\"},{\"name\":\"expires\",\"type\":\"long\"},{\"name\":\"seller\",\"type\":\"long\"},{\"name\":\"category\",\"type\":\"long\"},{\"name\":\"extra\",\"type\":[\"string\",\"null\"]}]}}]}");
+  private static final long serialVersionUID = 8515288236914638496L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroEvent\",\"namespace\":\"org.apache.flink.benchmark.nexmark.model.avro\",\"fields\":[{\"name\":\"bid\",\"type\":[{\"type\":\"record\",\"name\":\"AvroBid\",\"fields\":[{\"name\":\"auction\",\"type\":\"long\"},{\"name\":\"bidder\",\"type\":\"long\"},{\"name\":\"price\",\"type\":\"long\"},{\"name\":\"ts\",\"type\":\"long\"},{\"name\":\"extra\",\"type\":[\"string\",\"null\"]}]},\"null\"]},{\"name\":\"person\",\"type\":[{\"type\":\"record\",\"name\":\"AvroPerson\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"emailAddress\",\"type\":\"string\"},{\"name\":\"creditCard\",\"type\":\"string\"},{\"name\":\"city\",\"type\":\"string\"},{\"name\":\"state\",\"type\":\"string\"},{\"name\":\"ts\",\"type\":\"long\"},{\"name\":\"extra\",\"type\":[\"string\",\"null\"]}]},\"null\"]},{\"name\":\"auction\",\"type\":[{\"type\":\"record\",\"name\":\"AvroAuction\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"itemName\",\"type\":\"string\"},{\"name\":\"description\",\"type\":\"string\"},{\"name\":\"initialBid\",\"type\":\"long\"},{\"name\":\"reserve\",\"type\":\"long\"},{\"name\":\"ts\",\"type\":\"long\"},{\"name\":\"expires\",\"type\":\"long\"},{\"name\":\"seller\",\"type\":\"long\"},{\"name\":\"category\",\"type\":\"long\"},{\"name\":\"extra\",\"type\":[\"string\",\"null\"]}]},\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -564,11 +562,29 @@ public class AvroEvent extends org.apache.avro.specific.SpecificRecordBase imple
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    this.bid.customEncode(out);
+    if (this.bid == null) {
+      out.writeIndex(1);
+      out.writeNull();
+    } else {
+      out.writeIndex(0);
+      this.bid.customEncode(out);
+    }
 
-    this.person.customEncode(out);
+    if (this.person == null) {
+      out.writeIndex(1);
+      out.writeNull();
+    } else {
+      out.writeIndex(0);
+      this.person.customEncode(out);
+    }
 
-    this.auction.customEncode(out);
+    if (this.auction == null) {
+      out.writeIndex(1);
+      out.writeNull();
+    } else {
+      out.writeIndex(0);
+      this.auction.customEncode(out);
+    }
 
   }
 
@@ -577,43 +593,73 @@ public class AvroEvent extends org.apache.avro.specific.SpecificRecordBase imple
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      if (this.bid == null) {
-        this.bid = new org.apache.flink.benchmark.nexmark.model.avro.AvroBid();
+      if (in.readIndex() != 0) {
+        in.readNull();
+        this.bid = null;
+      } else {
+        if (this.bid == null) {
+          this.bid = new org.apache.flink.benchmark.nexmark.model.avro.AvroBid();
+        }
+        this.bid.customDecode(in);
       }
-      this.bid.customDecode(in);
 
-      if (this.person == null) {
-        this.person = new org.apache.flink.benchmark.nexmark.model.avro.AvroPerson();
+      if (in.readIndex() != 0) {
+        in.readNull();
+        this.person = null;
+      } else {
+        if (this.person == null) {
+          this.person = new org.apache.flink.benchmark.nexmark.model.avro.AvroPerson();
+        }
+        this.person.customDecode(in);
       }
-      this.person.customDecode(in);
 
-      if (this.auction == null) {
-        this.auction = new org.apache.flink.benchmark.nexmark.model.avro.AvroAuction();
+      if (in.readIndex() != 0) {
+        in.readNull();
+        this.auction = null;
+      } else {
+        if (this.auction == null) {
+          this.auction = new org.apache.flink.benchmark.nexmark.model.avro.AvroAuction();
+        }
+        this.auction.customDecode(in);
       }
-      this.auction.customDecode(in);
 
     } else {
       for (int i = 0; i < 3; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          if (this.bid == null) {
-            this.bid = new org.apache.flink.benchmark.nexmark.model.avro.AvroBid();
+          if (in.readIndex() != 0) {
+            in.readNull();
+            this.bid = null;
+          } else {
+            if (this.bid == null) {
+              this.bid = new org.apache.flink.benchmark.nexmark.model.avro.AvroBid();
+            }
+            this.bid.customDecode(in);
           }
-          this.bid.customDecode(in);
           break;
 
         case 1:
-          if (this.person == null) {
-            this.person = new org.apache.flink.benchmark.nexmark.model.avro.AvroPerson();
+          if (in.readIndex() != 0) {
+            in.readNull();
+            this.person = null;
+          } else {
+            if (this.person == null) {
+              this.person = new org.apache.flink.benchmark.nexmark.model.avro.AvroPerson();
+            }
+            this.person.customDecode(in);
           }
-          this.person.customDecode(in);
           break;
 
         case 2:
-          if (this.auction == null) {
-            this.auction = new org.apache.flink.benchmark.nexmark.model.avro.AvroAuction();
+          if (in.readIndex() != 0) {
+            in.readNull();
+            this.auction = null;
+          } else {
+            if (this.auction == null) {
+              this.auction = new org.apache.flink.benchmark.nexmark.model.avro.AvroAuction();
+            }
+            this.auction.customDecode(in);
           }
-          this.auction.customDecode(in);
           break;
 
         default:

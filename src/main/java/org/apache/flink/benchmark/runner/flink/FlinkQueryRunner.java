@@ -1,10 +1,8 @@
 package org.apache.flink.benchmark.runner.flink;
 
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.benchmark.nexmark.NexmarkConfiguration;
 import org.apache.flink.benchmark.nexmark.model.*;
 import org.apache.flink.benchmark.nexmark.sources.generator.Generator;
-import org.apache.flink.benchmark.nexmark.sources.generator.GeneratorConfig;
 import org.apache.flink.benchmark.testutils.FileUtil;
 import org.apache.flink.benchmark.testutils.TestUtil;
 import org.apache.flink.streaming.api.TimeCharacteristic;
@@ -46,7 +44,7 @@ public class FlinkQueryRunner {
 
     private long numEvents = 100000L;
 
-    private GeneratorConfig initialConfig = makeConfig(numEvents);
+    //private GeneratorConfig initialConfig = makeConfig(numEvents);
 
     private List<Category> inMemoryCategories;
 
@@ -54,10 +52,13 @@ public class FlinkQueryRunner {
 
     private Table categoryTable;
 
+    private Generator generator;
+
     public void init() {
+        generator = new Generator(Generator.makeConfig(numEvents));
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
-        inMemoryEvents = prepareInMemoryEvents(numEvents);
-        inMemoryCategories = prepareInMemoryCategories();
+        inMemoryEvents = generator.prepareInMemoryEvents(numEvents);
+        inMemoryCategories = generator.prepareInMemoryCategories();
 
         File folder = new File(testPath);
         if (folder.exists())
@@ -113,28 +114,7 @@ public class FlinkQueryRunner {
     }
 
 
-    private List<Event> prepareInMemoryEvents(long n) {
 
-        Generator generator = new Generator(initialConfig);
-        List<Event> events = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            Event event = generator.nextEvent().event;
-            //LOG.info(event.toString());
-            events.add(event);
-        }
-        return events;
-    }
-
-    private List<Category> prepareInMemoryCategories() {
-        List<Category> categories = new ArrayList<>();
-        for (int i = 0; i < GeneratorConfig.NUM_CATEGORIES; i++)
-            categories.add(new Category(initialConfig.FIRST_CATEGORY_ID + i));
-        return categories;
-    }
-
-    private GeneratorConfig makeConfig(long n) {
-        return new GeneratorConfig(NexmarkConfiguration.DEFAULT, System.currentTimeMillis(), 0, n, 0);
-    }
 
     public StreamExecutionEnvironment getEnv() {
         return env;

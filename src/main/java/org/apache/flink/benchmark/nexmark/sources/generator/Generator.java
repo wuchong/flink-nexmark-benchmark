@@ -18,20 +18,19 @@
 package org.apache.flink.benchmark.nexmark.sources.generator;
 
 
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.AuctionGenerator.nextAuction;
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.BidGenerator.nextBid;
-import static org.apache.flink.benchmark.nexmark.sources.generator.model.PersonGenerator.nextPerson;
+import org.apache.beam.sdk.values.TimestampedValue;
+import org.apache.flink.benchmark.nexmark.NexmarkConfiguration;
+import org.apache.flink.benchmark.nexmark.model.Category;
+import org.apache.flink.benchmark.nexmark.model.Event;
+import org.joda.time.Instant;
 
 import java.io.Serializable;
 import java.util.*;
 
-import org.apache.beam.sdk.values.TimestampedValue;
-import org.apache.flink.benchmark.nexmark.model.Category;
-import org.apache.flink.benchmark.nexmark.model.Event;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-
-import static org.apache.beam.vendor.guava.v20_0.com.google.common.base.Preconditions.*;
+import static org.apache.beam.vendor.guava.v20_0.com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.AuctionGenerator.nextAuction;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.BidGenerator.nextBid;
+import static org.apache.flink.benchmark.nexmark.sources.generator.model.PersonGenerator.nextPerson;
 
 
 /**
@@ -53,6 +52,7 @@ public class Generator implements Iterator<TimestampedValue<Event>>, Serializabl
      * The next event and its various timestamps. Ordered by increasing wallclock timestamp, then
      * (arbitrary but stable) event hash order.
      */
+
     public static class NextEvent implements Comparable<NextEvent> {
         /**
          * When, in wallclock time, should this event be emitted?
@@ -291,5 +291,26 @@ public class Generator implements Iterator<TimestampedValue<Event>>, Serializabl
         return String.format(
                 "Generator{config:%s; eventsCountSoFar:%d; wallclockBaseTime:%d}",
                 config, eventsCountSoFar, wallclockBaseTime);
+    }
+
+    public List<Event> prepareInMemoryEvents(long n) {
+        List<Event> events = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            Event event = nextEvent().event;
+            //LOG.info(event.toString());
+            events.add(event);
+        }
+        return events;
+    }
+
+    public List<Category> prepareInMemoryCategories() {
+        List<Category> categories = new ArrayList<>();
+        for (int i = 0; i < GeneratorConfig.NUM_CATEGORIES; i++)
+            categories.add(new Category(config.FIRST_CATEGORY_ID + i));
+        return categories;
+    }
+
+    public static GeneratorConfig makeConfig(long n) {
+        return new GeneratorConfig(NexmarkConfiguration.DEFAULT, System.currentTimeMillis(), 0, n, 0);
     }
 }

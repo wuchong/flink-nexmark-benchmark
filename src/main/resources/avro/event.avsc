@@ -4,7 +4,7 @@
   "name": "AvroEvent",
   "fields": [
     {"name": "bid", "type":
-    {"type": "record",
+    [{"type": "record",
       "name": "AvroBid",
       "fields": [
         {"name": "auction", "type": "long"},
@@ -12,10 +12,10 @@
         {"name": "price", "type": "long"},
         {"name": "ts", "type": "long"},
         {"name": "extra", "type": ["string", "null"]}
-      ]}
+      ]}, "null"]
     },
     {"name": "person", "type":
-    {"type": "record",
+    [{"type": "record",
       "name": "AvroPerson",
       "fields": [
         {"name": "id", "type": "long"},
@@ -26,11 +26,11 @@
         {"name": "state", "type": "string"},
         {"name": "ts", "type": "long"},
         {"name": "extra", "type": ["string", "null"]}
-      ]}
+      ]}, "null"]
     },
 
     {"name": "auction", "type":
-    {"type": "record",
+    [{"type": "record",
       "name": "AvroAuction",
       "fields": [
         {"name": "id", "type": "long"},
@@ -43,7 +43,7 @@
         {"name": "seller", "type": "long"},
         {"name": "category", "type": "long"},
         {"name": "extra", "type": ["string", "null"]}
-      ]}
+      ]}, "null"]
     }
   ]
 }

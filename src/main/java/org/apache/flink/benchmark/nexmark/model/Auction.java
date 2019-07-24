@@ -25,7 +25,6 @@ import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
 import org.apache.flink.benchmark.nexmark.NexmarkUtils;
 import org.apache.flink.benchmark.nexmark.model.avro.AvroAuction;
 
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -226,9 +225,34 @@ public class Auction implements KnownSize, Serializable {
                 id, itemName, description, initialBid, reserve, ts, expires, seller, category, extra);
     }
 
-    /*public AvroAuction toAvro(){
-        AvroAuction avroAuction = new AvroAuction();
-        avroAuction
-    }*/
+    public Auction(AvroAuction avroAuction){
+        this.id = avroAuction.getId();
+        this.itemName = avroAuction.getItemName().toString();
+        this.description = avroAuction.getDescription().toString();
+        this.initialBid = avroAuction.getInitialBid();
+        this.reserve = avroAuction.getReserve();
+        this.ts = new Timestamp(avroAuction.getTs());
+        this.expires = new Timestamp(avroAuction.getExpires());
+        this.seller = avroAuction.getSeller();
+        this.category = avroAuction.getCategory();
+        this.extra = avroAuction.getExtra().toString();
+    }
+
+
+    public AvroAuction toAvro(){
+        AvroAuction avroAuction = AvroAuction.newBuilder()
+                .setId(this.id)
+                .setItemName(this.itemName)
+                .setDescription(this.description)
+                .setInitialBid(this.initialBid)
+                .setReserve(this.reserve)
+                .setTs(this.ts.getTime())
+                .setExpires(this.expires.getTime())
+                .setSeller(this.seller)
+                .setCategory(this.category)
+                .setExtra(this.extra).build();
+
+        return avroAuction;
+    }
 
 }

@@ -18,14 +18,18 @@
 package org.apache.flink.benchmark.nexmark.model;
 
 
-import java.io.Serializable;
-import javax.annotation.Nullable;
 import org.apache.beam.sdk.coders.Coder;
 import org.apache.beam.sdk.coders.VarIntCoder;
 import org.apache.beam.sdk.schemas.JavaFieldSchema;
 import org.apache.beam.sdk.schemas.annotations.DefaultSchema;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Objects;
+import org.apache.flink.benchmark.nexmark.model.avro.AvroAuction;
+import org.apache.flink.benchmark.nexmark.model.avro.AvroBid;
 import org.apache.flink.benchmark.nexmark.model.avro.AvroEvent;
+import org.apache.flink.benchmark.nexmark.model.avro.AvroPerson;
+
+import javax.annotation.Nullable;
+import java.io.Serializable;
 
 
 /**
@@ -35,124 +39,150 @@ import org.apache.flink.benchmark.nexmark.model.avro.AvroEvent;
 @DefaultSchema(JavaFieldSchema.class)
 public class Event implements KnownSize, Serializable {
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Event event = (Event) o;
+        return Objects.equal(newPerson, event.newPerson)
+                && Objects.equal(newAuction, event.newAuction)
+                && Objects.equal(bid, event.bid);
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(newPerson, newAuction, bid);
     }
-    Event event = (Event) o;
-    return Objects.equal(newPerson, event.newPerson)
-        && Objects.equal(newAuction, event.newAuction)
-        && Objects.equal(bid, event.bid);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(newPerson, newAuction, bid);
-  }
+    /**
+     * The type of object stored in this event. *
+     */
+    public enum Type {
+        PERSON(0),
+        AUCTION(1),
+        BID(2);
 
-  /** The type of object stored in this event. * */
-  public enum Type {
-    PERSON(0),
-    AUCTION(1),
-    BID(2);
+        private final int value;
 
-    private final int value;
-
-    Type(int value) {
-      this.value = value;
+        Type(int value) {
+            this.value = value;
+        }
     }
-  }
 
-  private static final Coder<Integer> INT_CODER = VarIntCoder.of();
+    private static final Coder<Integer> INT_CODER = VarIntCoder.of();
 
-  @Nullable
-  @org.apache.avro.reflect.Nullable public Person newPerson;
+    @Nullable
+    @org.apache.avro.reflect.Nullable
+    public Person newPerson;
 
-  @Nullable
-  @org.apache.avro.reflect.Nullable public Auction newAuction;
+    @Nullable
+    @org.apache.avro.reflect.Nullable
+    public Auction newAuction;
 
-  @Nullable
-  @org.apache.avro.reflect.Nullable public Bid bid;
+    @Nullable
+    @org.apache.avro.reflect.Nullable
+    public Bid bid;
 
-  @SuppressWarnings("unused")
-  public Event() {
-    newPerson = null;
-    newAuction = null;
-    bid = null;
-  }
-
-  public Event(AvroEvent arvoEvent){
-
-  }
-
-  public Event(Person newPerson) {
-    this.newPerson = newPerson;
-    newAuction = null;
-    bid = null;
-  }
-
-
-  public Event(Auction newAuction) {
-    newPerson = null;
-    this.newAuction = newAuction;
-    bid = null;
-  }
-
-  public Event(Bid bid) {
-    newPerson = null;
-    newAuction = null;
-    this.bid = bid;
-  }
-
-  /** Return a copy of event which captures {@code annotation}. (Used for debugging). */
-  public Event withAnnotation(String annotation) {
-    if (newPerson != null) {
-      return new Event(newPerson.withAnnotation(annotation));
-    } else if (newAuction != null) {
-      return new Event(newAuction.withAnnotation(annotation));
-    } else {
-      return new Event(bid.withAnnotation(annotation));
+    @SuppressWarnings("unused")
+    public Event() {
+        newPerson = null;
+        newAuction = null;
+        bid = null;
     }
-  }
 
-  /** Does event have {@code annotation}? (Used for debugging.) */
-  public boolean hasAnnotation(String annotation) {
-    if (newPerson != null) {
-      return newPerson.hasAnnotation(annotation);
-    } else if (newAuction != null) {
-      return newAuction.hasAnnotation(annotation);
-    } else {
-      return bid.hasAnnotation(annotation);
-    }
-  }
 
-  @Override
-  public long sizeInBytes() {
-    if (newPerson != null) {
-      return 1 + newPerson.sizeInBytes();
-    } else if (newAuction != null) {
-      return 1 + newAuction.sizeInBytes();
-    } else if (bid != null) {
-      return 1 + bid.sizeInBytes();
-    } else {
-      throw new RuntimeException("invalid event");
+    public Event(Person newPerson) {
+        this.newPerson = newPerson;
+        newAuction = null;
+        bid = null;
     }
-  }
 
-  @Override
-  public String toString() {
-    if (newPerson != null) {
-      return newPerson.toString();
-    } else if (newAuction != null) {
-      return newAuction.toString();
-    } else if (bid != null) {
-      return bid.toString();
-    } else {
-      throw new RuntimeException("invalid event");
+
+    public Event(Auction newAuction) {
+        newPerson = null;
+        this.newAuction = newAuction;
+        bid = null;
     }
-  }
+
+    public Event(Bid bid) {
+        newPerson = null;
+        newAuction = null;
+        this.bid = bid;
+    }
+
+    /**
+     * Return a copy of event which captures {@code annotation}. (Used for debugging).
+     */
+    public Event withAnnotation(String annotation) {
+        if (newPerson != null) {
+            return new Event(newPerson.withAnnotation(annotation));
+        } else if (newAuction != null) {
+            return new Event(newAuction.withAnnotation(annotation));
+        } else {
+            return new Event(bid.withAnnotation(annotation));
+        }
+    }
+
+    /**
+     * Does event have {@code annotation}? (Used for debugging.)
+     */
+    public boolean hasAnnotation(String annotation) {
+        if (newPerson != null) {
+            return newPerson.hasAnnotation(annotation);
+        } else if (newAuction != null) {
+            return newAuction.hasAnnotation(annotation);
+        } else {
+            return bid.hasAnnotation(annotation);
+        }
+    }
+
+    @Override
+    public long sizeInBytes() {
+        if (newPerson != null) {
+            return 1 + newPerson.sizeInBytes();
+        } else if (newAuction != null) {
+            return 1 + newAuction.sizeInBytes();
+        } else if (bid != null) {
+            return 1 + bid.sizeInBytes();
+        } else {
+            throw new RuntimeException("invalid event");
+        }
+    }
+
+    @Override
+    public String toString() {
+        if (newPerson != null) {
+            return newPerson.toString();
+        } else if (newAuction != null) {
+            return newAuction.toString();
+        } else if (bid != null) {
+            return bid.toString();
+        } else {
+            throw new RuntimeException("invalid event");
+        }
+    }
+
+    public AvroEvent toAvro() {
+        AvroEvent avroEvent = AvroEvent.newBuilder()
+                .setAuction(this.newAuction == null ? null : this.newAuction.toAvro())
+                .setBid(this.bid == null ? null : this.bid.toAvro())
+                .setPerson(this.newPerson == null ? null : this.newPerson.toAvro())
+                .build();
+        return avroEvent;
+    }
+
+    public Event(AvroEvent avroEvent) {
+        AvroPerson avroPerson = avroEvent.getPerson();
+        AvroBid avroBid = avroEvent.getBid();
+        AvroAuction avroAuction = avroEvent.getAuction();
+        this.newPerson = avroPerson == null ? null : new Person(avroPerson);
+        this.bid = avroBid == null ? null : new Bid(avroBid);
+        this.newAuction = avroAuction == null ? null : new Auction(avroAuction);
+    }
+
+
 }
