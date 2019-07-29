@@ -1,4 +1,4 @@
-package org.apache.flink.benchmark.kafka;
+package org.apache.flink.benchmark.nexmark.kafka;
 
 public class IKafkaConstants {
     public static String KAFKA_BROKERS = "localhost:9092";

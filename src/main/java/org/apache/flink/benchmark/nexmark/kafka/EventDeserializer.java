@@ -1,23 +1,23 @@
-package org.apache.flink.benchmark.kafka;
+package org.apache.flink.benchmark.nexmark.kafka;
 
 import org.apache.flink.benchmark.nexmark.model.Event;
 import org.apache.flink.benchmark.nexmark.model.avro.AvroEvent;
-import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.Deserializer;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class EventSerializer implements Serializer<Event> {
+public class EventDeserializer implements Deserializer<Event> {
     @Override
     public void configure(Map<String, ?> map, boolean b) {
 
     }
 
     @Override
-    public byte[] serialize(String s, Event event) {
-        try {
-            return AvroEvent.getEncoder().encode(event.toAvro()).array();
-        } catch (IOException e) {
+    public Event deserialize(String topic, byte[] bytes) {
+        try{
+            return new Event(AvroEvent.getDecoder().decode(bytes));
+        }catch (IOException e){
             throw new RuntimeException(e);
         }
     }

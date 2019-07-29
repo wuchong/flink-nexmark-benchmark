@@ -1,6 +1,9 @@
 package org.apache.flink.benchmark.kafka;
 
 
+import org.apache.flink.benchmark.nexmark.kafka.EventConsumerCreator;
+import org.apache.flink.benchmark.nexmark.kafka.EventProducerCreator;
+import org.apache.flink.benchmark.nexmark.kafka.IKafkaConstants;
 import org.apache.flink.benchmark.nexmark.model.Event;
 import org.apache.flink.benchmark.nexmark.sources.generator.Generator;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -18,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -87,54 +89,6 @@ public class KafkaTest {
         }
         consumer.close();
         LOGGER.info("finish consuming message");
-    }
-
-    @Test
-    public void runProducer() {
-        Producer<Long, String> producer = ProducerCreator.createProducer();
-        for (int index = 0; index < IKafkaConstants.MESSAGE_COUNT; index++) {
-            ProducerRecord<Long, String> record = new ProducerRecord<>(IKafkaConstants.TOPIC_NAME,
-                    "This is record " + index);
-            try {
-                RecordMetadata metadata = producer.send(record).get();
-                System.out.println("Record sent with key " + index + " to partition " + metadata.partition()
-                        + " with offset " + metadata.offset());
-            } catch (ExecutionException e) {
-                System.out.println("Error in sending record");
-                System.out.println(e);
-            } catch (InterruptedException e) {
-                System.out.println("Error in sending record");
-                System.out.println(e);
-            }
-        }
-    }
-
-    @Test
-    public void runConsumer() {
-        Consumer<Long, String> consumer = ConsumerCreator.createConsumer();
-        int noMessageFound = 0;
-        while (true) {
-            ConsumerRecords<Long, String> consumerRecords = consumer.poll(1000);
-            // 1000 is the time in milliseconds consumer will wait if no record is found at broker.
-            if (consumerRecords.count() == 0) {
-                noMessageFound++;
-                if (noMessageFound > IKafkaConstants.MAX_NO_MESSAGE_FOUND_COUNT)
-                    // If no message found count is reached to threshold exit loop.
-                    break;
-                else
-                    continue;
-            }
-            //print each record.
-            consumerRecords.forEach(record -> {
-                System.out.println("Record Key " + record.key());
-                System.out.println("Record value " + record.value());
-                System.out.println("Record partition " + record.partition());
-                System.out.println("Record offset " + record.offset());
-            });
-            // commits the offset of record to broker.
-            consumer.commitAsync();
-        }
-        consumer.close();
     }
 
 
