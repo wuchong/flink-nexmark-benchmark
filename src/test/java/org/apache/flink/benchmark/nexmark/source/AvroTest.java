@@ -17,7 +17,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class AvroTest {
 
