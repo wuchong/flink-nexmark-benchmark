@@ -1,4 +1,4 @@
-package org.apache.flink.benchmark.runner.flink;
+package org.apache.flink.benchmark.nexmark.source;
 
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
