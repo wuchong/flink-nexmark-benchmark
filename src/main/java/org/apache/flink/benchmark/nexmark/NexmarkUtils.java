@@ -18,37 +18,20 @@
 package org.apache.flink.benchmark.nexmark;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.coders.AvroCoder;
 import org.apache.beam.sdk.coders.ByteArrayCoder;
 import org.apache.beam.sdk.coders.Coder;
 import org.apache.beam.sdk.coders.CoderException;
-import org.apache.beam.sdk.coders.CoderRegistry;
 import org.apache.beam.sdk.coders.CustomCoder;
-import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.io.FileSystems;
 import org.apache.beam.sdk.io.GenerateSequence;
-import org.apache.beam.sdk.io.Read;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.metrics.Counter;
 import org.apache.beam.sdk.metrics.Metrics;
 import org.apache.beam.sdk.state.StateSpec;
 import org.apache.beam.sdk.state.StateSpecs;
 import org.apache.beam.sdk.state.ValueState;
-import org.apache.beam.sdk.transforms.Combine;
-import org.apache.beam.sdk.transforms.Create;
-import org.apache.beam.sdk.transforms.DoFn;
-import org.apache.beam.sdk.transforms.MapElements;
-import org.apache.beam.sdk.transforms.PTransform;
-import org.apache.beam.sdk.transforms.ParDo;
-import org.apache.beam.sdk.transforms.SimpleFunction;
+import org.apache.beam.sdk.transforms.*;
 import org.apache.beam.sdk.transforms.windowing.AfterPane;
 import org.apache.beam.sdk.transforms.windowing.BoundedWindow;
 import org.apache.beam.sdk.transforms.windowing.GlobalWindows;
@@ -61,13 +44,8 @@ import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Splitter;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Strings;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.collect.ImmutableList;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.hash.Hashing;
-
-
 import org.apache.flink.benchmark.nexmark.model.Event;
 import org.apache.flink.benchmark.nexmark.model.KnownSize;
-
-import org.apache.flink.benchmark.nexmark.sources.BoundedEventSource;
-import org.apache.flink.benchmark.nexmark.sources.UnboundedEventSource;
 import org.apache.flink.benchmark.nexmark.sources.generator.Generator;
 import org.apache.flink.benchmark.nexmark.sources.generator.GeneratorConfig;
 import org.joda.time.Duration;
@@ -75,7 +53,15 @@ import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.beam.vendor.guava.v20_0.com.google.common.base.Preconditions.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.apache.beam.vendor.guava.v20_0.com.google.common.base.Preconditions.checkArgument;
 
 
 /** Odd's 'n Ends used throughout queries and driver. */
@@ -348,27 +334,7 @@ public class NexmarkUtils {
     return new Generator(standardGeneratorConfig(configuration));
   }
 
-  /** Return a transform which yields a finite number of synthesized events generated as a batch. */
-  public static PTransform<PBegin, PCollection<Event>> batchEventsSource(
-      NexmarkConfiguration configuration) {
-    return Read.from(
-        new BoundedEventSource(
-            standardGeneratorConfig(configuration), configuration.numEventGenerators));
-  }
 
-  /**
-   * Return a transform which yields a finite number of synthesized events generated on-the-fly in
-   * real time.
-   */
-  public static PTransform<PBegin, PCollection<Event>> streamEventsSource(
-      NexmarkConfiguration configuration) {
-    return Read.from(
-        new UnboundedEventSource(
-            NexmarkUtils.standardGeneratorConfig(configuration),
-            configuration.numEventGenerators,
-            configuration.watermarkHoldbackSec,
-            configuration.isRateLimited));
-  }
 
   /** Return a transform to pass-through events, but count them as they go by. */
   public static ParDo.SingleOutput<Event, Event> snoop(final String name) {
