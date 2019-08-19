@@ -10,6 +10,6 @@ public class Query8Test extends AbstractQueryTest{
     public void run() throws Exception {
         String query = SqlQuery8.getQuery(flinkQueryRunner.getPersonTable().toString(),
                 flinkQueryRunner.getAuctionTable().toString());
-        flinkQueryRunner.executeSqlQuery(query);
+        flinkQueryRunner.executeSqlQuery(query, "query8_result");
     }
 }

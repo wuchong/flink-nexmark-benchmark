@@ -11,6 +11,6 @@ public class Query7Test extends AbstractQueryTest{
     @Test
     public void run() throws Exception {
         String query = SqlQuery7.getQuery(flinkQueryRunner.getBidTable().toString());
-        flinkQueryRunner.executeSqlQuery(query);
+        flinkQueryRunner.executeSqlQuery(query, "query7_result");
     }
 }

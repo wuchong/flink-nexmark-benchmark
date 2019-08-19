@@ -12,6 +12,6 @@ public class Query9Test extends AbstractQueryTest{
     public void run() throws Exception {
         String query = SqlQuery9.getQuery(flinkQueryRunner.getPersonTable().toString(),
                 flinkQueryRunner.getAuctionTable().toString());
-        flinkQueryRunner.executeSqlQuery(query);
+        flinkQueryRunner.executeSqlQuery(query, "query9_result");
     }
 }

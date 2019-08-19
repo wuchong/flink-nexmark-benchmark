@@ -13,10 +13,9 @@ public class Query6Test extends AbstractQueryTest{
 
     @Test
     public void run() throws Exception {
-
         String query = SqlQuery6.getQuery(flinkQueryRunner.getAuctionTable().toString(),
                 flinkQueryRunner.getBidTable().toString());
 
-        flinkQueryRunner.executeSqlQuery(query);
+        flinkQueryRunner.executeSqlQuery(query, "query6_result");
     }
 }

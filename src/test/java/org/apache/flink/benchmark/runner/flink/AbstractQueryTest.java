@@ -7,7 +7,7 @@ public class AbstractQueryTest {
     protected FlinkQueryRunner flinkQueryRunner;
 
     @Before
-    public void before(){
+    public void before() throws Exception{
         flinkQueryRunner = new FlinkQueryRunner();
         flinkQueryRunner.init();
     }

@@ -13,7 +13,7 @@ public class Query4Test extends AbstractQueryTest{
         String sql = SqlQuery4.getQuery(flinkQueryRunner.getCategoryTable().toString(),
                 flinkQueryRunner.getAuctionTable().toString(),
                 flinkQueryRunner.getBidTable().toString());
-        flinkQueryRunner.executeSqlQuery(sql);
+        flinkQueryRunner.executeSqlQuery(sql, "query4_result");
     }
 
 

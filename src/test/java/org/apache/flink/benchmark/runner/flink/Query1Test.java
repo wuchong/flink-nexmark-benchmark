@@ -35,10 +35,10 @@ public class Query1Test extends AbstractQueryTest {
 
     @Test
     public void run() throws Exception {
-
         flinkQueryRunner.getTableEnv().registerFunction(DolToEur.functionName, new DolToEur());
 
-        flinkQueryRunner.executeSqlQuery(SqlQuery1.getQuery(flinkQueryRunner.getBidTable().toString()));
+        flinkQueryRunner.executeSqlQuery(SqlQuery1.getQuery(flinkQueryRunner.getBidTable().toString()),
+                "query1_result");
     }
 
 

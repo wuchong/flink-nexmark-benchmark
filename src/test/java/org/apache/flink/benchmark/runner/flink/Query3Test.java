@@ -41,6 +41,6 @@ public class Query3Test extends AbstractQueryTest {
     public void run() throws Exception {
         String query = SqlQuery3.getQuery(flinkQueryRunner.getAuctionTable().toString(),
                 flinkQueryRunner.getPersonTable().toString());
-        flinkQueryRunner.executeSqlQuery(query);
+        flinkQueryRunner.executeSqlQuery(query, "query3_result");
     }
 }

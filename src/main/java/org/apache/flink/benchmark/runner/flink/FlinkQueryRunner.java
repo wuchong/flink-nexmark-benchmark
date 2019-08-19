@@ -15,7 +15,10 @@ import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.types.Row;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +57,7 @@ public class FlinkQueryRunner {
 
     private Generator generator;
 
-    public void init() {
+    public void init() throws Exception {
         generator = new Generator(Generator.makeConfig(numEvents));
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
         inMemoryEvents = generator.prepareInMemoryEvents(numEvents);
@@ -105,15 +108,15 @@ public class FlinkQueryRunner {
 
     }
 
-    public void executeSqlQuery(String sqlQuery) throws Exception{
+    public void executeSqlQuery(String sqlQuery, String outputFileName) throws Exception {
+        PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(outputFileName, false), 4096));
+        System.setOut(ps);
         LOG.info(sqlQuery);
         Table result = tableEnv.sqlQuery(sqlQuery);
-        DataStream<Tuple2<Boolean,Row>> stream = tableEnv.toRetractStream(result, Row.class);
+        DataStream<Tuple2<Boolean, Row>> stream = tableEnv.toRetractStream(result, Row.class);
         stream.print();
         env.execute();
     }
-
-
 
 
     public StreamExecutionEnvironment getEnv() {
@@ -139,4 +142,6 @@ public class FlinkQueryRunner {
     public Table getCategoryTable() {
         return categoryTable;
     }
+
+
 }

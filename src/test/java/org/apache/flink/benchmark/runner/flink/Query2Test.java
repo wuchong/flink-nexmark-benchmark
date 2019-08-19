@@ -9,10 +9,9 @@ public class Query2Test extends AbstractQueryTest {
 
     @Test
     public void run() throws Exception {
-
         String query2 = SqlQuery2.getQuery(flinkQueryRunner.getBidTable().toString());
 
-        flinkQueryRunner.executeSqlQuery(query2);
+        flinkQueryRunner.executeSqlQuery(query2, "query2_result");
 
     }
 }

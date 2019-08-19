@@ -11,6 +11,6 @@ public class Query5Test extends AbstractQueryTest{
     @Test
     public void run() throws Exception {
         String sql = SqlQuery5.getQuery(flinkQueryRunner.getBidTable().toString());
-        flinkQueryRunner.executeSqlQuery(sql);
+        flinkQueryRunner.executeSqlQuery(sql, "query5_result");
     }
 }
