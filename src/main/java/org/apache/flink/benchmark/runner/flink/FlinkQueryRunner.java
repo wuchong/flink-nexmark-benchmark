@@ -10,6 +10,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.types.Row;
@@ -28,10 +29,11 @@ public class FlinkQueryRunner {
     private String testPath = "./query_test_results";
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(FlinkQueryRunner.class);
+    private EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
 
     private final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-    private final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
+    private final StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
 
     private DataStream<Bid> bidStream;
 
